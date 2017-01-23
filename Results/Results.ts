@@ -1,21 +1,14 @@
-var elementDiffTemplate = `
-    <td data-bind="text: kind"></td>
-    <td class="path" data-bind="text:path"></td>
-    <td data-bind="text:lhs"></td>
-    <td data-bind="text:rhs"></td>
-`.toString();
-var elementDiffViewModel = function(params) {
-    var self = this;
-    self.kind = params.kind;
-    self.path = !!params.path ? params.path().join(', ') : "no path";
-    /* LHS conditions etc. */
-    self.lhs = !!params.lhs ? params.lhs : "---";
-    self.rhs = !!params.rhs ? params.rhs : "---";
-    return self;
-};
+import * as elementDiff from './components/element-diff';
+
+declare global {
+    interface Window {
+        FileReader: any;
+    }
+}
+
 ko.components.register('element-diff', {
-    viewModel: elementDiffViewModel,
-    template: elementDiffTemplate
+    viewModel: elementDiff.viewModel,
+    template: elementDiff.template
 });
 
 interface Page {
@@ -25,11 +18,7 @@ interface Page {
     elementsToTest: string;
 }
 
-interface Window {
-    FileReader: any;
-}
-
-var ViewModel = function():void{
+const ViewModel = function (): void {
     var self = this;
 
     self.loadFile = function () {
@@ -68,8 +57,8 @@ var ViewModel = function():void{
         date: ko.observable<string>('loading...'),
         pages: ko.observableArray<Page>([])
     };
-    self.convertedDate = ko.pureComputed(function(){
-        if(self.data.date() != 'loading...'){
+    self.convertedDate = ko.pureComputed(function () {
+        if (self.data.date() != 'loading...') {
             return new Date(self.data.date()).toString();
         } else {
             return self.data.date();
