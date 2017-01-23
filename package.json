@@ -10,6 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "@types/jasmine": "^2.5.40",
+    "@types/knockout": "^3.4.39",
+    "@types/knockout.mapping": "^2.0.28",
     "@types/protractor": "^4.0.0",
     "@types/selenium-webdriver": "^2.53.39",
     "protractor": "^5.0.0"

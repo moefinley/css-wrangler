@@ -1,5 +1,10 @@
-var elementDiffTemplate = "\n    <td data-bind=\"text: kind\"></td>\n    <td class=\"path\" data-bind=\"text:path\"></td>\n    <td data-bind=\"text:lhs\"></td>\n    <td data-bind=\"text:rhs\"></td>\n".toString();
-var elementDiffViewModel = function (params) {
+var elementDiffTemplate = `
+    <td data-bind="text: kind"></td>
+    <td class="path" data-bind="text:path"></td>
+    <td data-bind="text:lhs"></td>
+    <td data-bind="text:rhs"></td>
+`.toString();
+var elementDiffViewModel = function(params) {
     var self = this;
     self.kind = params.kind;
     self.path = !!params.path ? params.path().join(', ') : "no path";
@@ -12,14 +17,29 @@ ko.components.register('element-diff', {
     viewModel: elementDiffViewModel,
     template: elementDiffTemplate
 });
-var ViewModel = function () {
+
+interface Page {
+    id: string;
+    name: string;
+    url: string;
+    elementsToTest: string;
+}
+
+interface Window {
+    FileReader: any;
+}
+
+var ViewModel = function():void{
     var self = this;
+
     self.loadFile = function () {
         var input, file, fr;
+
         if (typeof window.FileReader !== 'function') {
             alert("The file API isn't supported on this browser yet.");
             return;
         }
+
         input = document.getElementById('fileinput');
         if (!input) {
             alert("Um, couldn't find the fileinput element.");
@@ -36,26 +56,26 @@ var ViewModel = function () {
             fr.onload = receivedText;
             fr.readAsText(file);
         }
+
         function receivedText(e) {
-            var lines = e.target.result;
+            let lines = e.target.result;
             ko.mapping.fromJSON(lines, {}, self.data);
         }
     };
     self.data = {
-        original: ko.observable('loading...'),
-        comparator: ko.observable('loading...'),
-        date: ko.observable('loading...'),
-        pages: ko.observableArray([])
+        original: ko.observable<string|any>('loading...'),
+        comparator: ko.observable<string|any>('loading...'),
+        date: ko.observable<string>('loading...'),
+        pages: ko.observableArray<Page>([])
     };
-    self.convertedDate = ko.pureComputed(function () {
-        if (self.data.date() != 'loading...') {
+    self.convertedDate = ko.pureComputed(function(){
+        if(self.data.date() != 'loading...'){
             return new Date(self.data.date()).toString();
-        }
-        else {
+        } else {
             return self.data.date();
         }
     });
+
     return self;
 };
 ko.applyBindings(new ViewModel());
-//# sourceMappingURL=Results.js.map
