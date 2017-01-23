@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="Results.css">
+    <script src="libs/jquery-3.1.1.min.js"></script>
+    <script src="libs/knockout-3.4.1.debug.js"></script>
+    <script src="libs/knockout.mapping-latest.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+</head>
+<body>
+<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="form-inline">
+
+    <fieldset class="form-group">
+        <label for="fileinput">Select a JSON file</label>
+        <input type="file" id="fileinput">
+        <input type="button" id="btnLoad" value="Load" data-bind="click: loadFile" class="btn btn-default">
+    </fieldset>
+
+</form>
+<hr/>
+<dl class="dl-horizontal">
+    <dt>Original</dt>
+    <dd data-bind="text: data.original"></dd>
+    <dt>Comparator</dt>
+    <dd data-bind="text: data.comparator"></dd>
+    <dt>Date</dt>
+    <dd data-bind="text: convertedDate"></dd>
+</dl>
+<div data-bind="foreach:data.pages">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a data-bind="attr: {href:('#'+id())}" role="button" data-toggle="collapse"
+                   aria-expanded="false" aria-controls="collapseExample">
+                    <span data-bind="text:name"></span>
+                    <span class="badge pull-right" data-bind="text: elementsToTest().length"></span>
+                </a>
+            </h4>
+        </div>
+        <div class="panel-collapse collapse" data-bind="attr: {id:id}">
+            <div class="panel">
+                <div class="well">
+                    <table class="table table-striped">
+                        <!-- ko foreach: elementsToTest -->
+                            <thead>
+                            <tr>
+                                <th colspan="4">Selector:&nbsp;
+                                <span data-bind="text: selector"></span></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td>Kind</td>
+                                <td>Property</td>
+                                <td>Original</td>
+                                <td>Comparand</td>
+                            </tr>
+                            <!-- ko foreach: diff -->
+                            <tr class="results-row" data-bind="component: {name: 'element-diff', params: $data}">
+
+                            </tr>
+                            <!-- /ko -->
+                            </tbody>
+                        <!-- /ko -->
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<br/>
+<script src="Results.js"></script>
+</body>
+</html>
