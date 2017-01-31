@@ -45,29 +45,9 @@
         <div class="panel-collapse collapse" data-bind="attr: {id:id}">
             <div class="panel">
                 <div class="well">
-                    <table class="table table-striped">
-                        <!-- ko foreach: elementsToTest -->
-                            <thead>
-                            <tr>
-                                <th colspan="4">Selector:&nbsp;
-                                <span data-bind="text: selector"></span></th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <td>Kind</td>
-                                <td>Property</td>
-                                <td>Original</td>
-                                <td>Comparand</td>
-                            </tr>
-                            <!-- ko foreach: diff -->
-                            <tr class="results-row" data-bind="component: {name: 'element-diff', params: $data}">
-
-                            </tr>
-                            <!-- /ko -->
-                            </tbody>
-                        <!-- /ko -->
-                    </table>
+                    <!-- ko foreach: elementsToTest -->
+                    <div data-bind="component: {name: 'diff-element', params: $data}"></div>
+                    <!-- /ko -->
                 </div>
             </div>
         </div>
@@ -85,5 +65,6 @@
 <br/>
 <br/>
 <br/>
+<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
 </body>
 </html>

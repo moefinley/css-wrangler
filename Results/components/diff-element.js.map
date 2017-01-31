@@ -1,0 +1,1 @@
+{"version":3,"file":"diff-element.js","sourceRoot":"","sources":["diff-element.ts"],"names":[],"mappings":";;IAAA;;OAEG;IACH,mBAA0B,WAAuB;QAC7C,IAAI,IAAI,GAAG,IAAI,CAAC;QAChB,IAAI,CAAC,QAAQ,GAAG,WAAW,CAAC,QAAQ,CAAC;QACrC,IAAI,CAAC,IAAI,GAAG,WAAW,CAAC,IAAI,CAAC;IACjC,CAAC;IAJe,iBAAS,YAIxB,CAAA;IACU,gBAAQ,GAAG,+dAiBrB,CAAC,QAAQ,EAAE,CAAC"}

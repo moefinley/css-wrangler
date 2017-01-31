@@ -1,4 +1,6 @@
-import * as elementDiff from './components/element-diff';
+import * as diffElement from './components/diff-element';
+import * as diffElementDiff from './components/diff-element-diff';
+import {diffElementMapper} from "./mapping/diff-element";
 
 declare global {
     interface Window {
@@ -6,17 +8,14 @@ declare global {
     }
 }
 
-ko.components.register('element-diff', {
-    viewModel: elementDiff.viewModel,
-    template: elementDiff.template
+ko.components.register('diff-element', {
+    viewModel: diffElement.viewModel,
+    template: diffElement.template
 });
-
-interface Page {
-    id: string;
-    name: string;
-    url: string;
-    elementsToTest: string;
-}
+ko.components.register('diff-element-diff', {
+    viewModel: diffElementDiff.viewModel,
+    template: diffElementDiff.template
+});
 
 const ViewModel = function (): void {
     var self = this;
@@ -48,7 +47,10 @@ const ViewModel = function (): void {
 
         function receivedText(e) {
             let lines = e.target.result;
-            ko.mapping.fromJSON(lines, {}, self.data);
+            let mappingOptions = {
+                'elementsToTest': diffElementMapper
+            };
+            ko.mapping.fromJSON(lines, mappingOptions, self.data);
         }
     };
     self.data = {

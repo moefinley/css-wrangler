@@ -4,7 +4,7 @@ define(["require", "exports"], function (require, exports) {
     function viewModel(params) {
         var self = this;
         self.kind = params.kind;
-        self.path = !!params.path ? params.path().join(', ') : "no path";
+        self.path = !!params.path ? params.path.join(', ') : "no path";
         /* LHS conditions etc. */
         self.lhs = !!params.lhs ? params.lhs : "---";
         self.rhs = !!params.rhs ? params.rhs : "---";
@@ -13,4 +13,4 @@ define(["require", "exports"], function (require, exports) {
     exports.viewModel = viewModel;
     ;
 });
-//# sourceMappingURL=element-diff.js.map
+//# sourceMappingURL=diff-element-diff.js.map

@@ -1,8 +1,12 @@
-define(["require", "exports", './components/element-diff'], function (require, exports, elementDiff) {
+define(["require", "exports", './components/diff-element', './components/diff-element-diff', "./mapping/diff-element"], function (require, exports, diffElement, diffElementDiff, diff_element_1) {
     "use strict";
-    ko.components.register('element-diff', {
-        viewModel: elementDiff.viewModel,
-        template: elementDiff.template
+    ko.components.register('diff-element', {
+        viewModel: diffElement.viewModel,
+        template: diffElement.template
+    });
+    ko.components.register('diff-element-diff', {
+        viewModel: diffElementDiff.viewModel,
+        template: diffElementDiff.template
     });
     var ViewModel = function () {
         var self = this;
@@ -30,7 +34,10 @@ define(["require", "exports", './components/element-diff'], function (require, e
             }
             function receivedText(e) {
                 var lines = e.target.result;
-                ko.mapping.fromJSON(lines, {}, self.data);
+                var mappingOptions = {
+                    'elementsToTest': diff_element_1.diffElementMapper
+                };
+                ko.mapping.fromJSON(lines, mappingOptions, self.data);
             }
         };
         self.data = {

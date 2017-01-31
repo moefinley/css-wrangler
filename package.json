@@ -9,6 +9,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/deep-diff": "0.0.30",
     "@types/jasmine": "^2.5.40",
     "@types/knockout": "^3.4.39",
     "@types/knockout.mapping": "^2.0.28",
