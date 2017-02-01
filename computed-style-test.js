@@ -39,6 +39,9 @@ var getComputedStyles = function (parentElementQuerySelector) {
     /* This is run in the browser and therefore must stay cross compatible */
     var returnObj = {};
     var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
+    if(parentElement === null){
+        throw error('could not find element');
+    }
     var Xpath = {};
     Xpath.getElementXPath = function (element) {
         if (element && element.id)
@@ -108,7 +111,6 @@ let compareComputedStyles = function (scope) {
     browser.ignoreSynchronization = true;
 
     function getAllElementsComputedStyles(browser, page, url, isOriginal) {
-        let elementComputedStylesArray = [];
         let promiseArray = [];
 
         browser.get(url);
@@ -137,12 +139,16 @@ let compareComputedStyles = function (scope) {
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
             console.log('Diff obj length: ' + allResultsArray.length);
 
-            for (let diffElement of page.elementsToTest) {
+            for (let index in page.elementsToTest) {
+                let diffElement = page.elementsToTest[index];
                 diffElement.diff = differ(diffElement.original, diffElement.comparand);
-                console.log('1. diff length: ' + diffElement.diff.length);
                 cleanup(diffElement);
-                console.log('3. diff length: ' + diffElement.diff.length);
             }
+
+            page.elementsToTest = page.elementsToTest.filter((diffElement) => {
+                return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
+            });
+
             if (index == (config.pages.length - 1)) {
                 console.log('last page complete');
                 writeToDisk(createOutputJsonForAllPages());
@@ -154,28 +160,29 @@ let compareComputedStyles = function (scope) {
 };
 
 let cleanup = function (diffElement) {
-    diffElement.diff = diffElement.diff.filter((element, index, array)=>{
-        if (element.kind === "E") {
-            let lhs = element.lhs;
-            let rhs = element.rhs;
-            /* Remove URLs where the only difference is the domain */
-            if (lhs.indexOf('url(') === 0 && rhs.indexOf('url(') === 0) {
-                if (lhs.indexOf('"') > -1 || rhs.indexOf('"') > -1) {
-                    lhs = lhs.replace(/"/g, '');
-                    rhs = rhs.replace(/"/g, '');
-                }
-                let lhsUrl = url.parse(lhs.substring(4, lhs.length - 1));
-                let rhsUrl = url.parse(rhs.substring(4, rhs.length - 1));
+    if(typeof diffElement.diff !== 'undefined') {
+        diffElement.diff = diffElement.diff.filter((element, index, array) => {
+            if (element.kind === "E") {
+                let lhs = element.lhs;
+                let rhs = element.rhs;
+                /* Remove URLs where the only difference is the domain */
+                if (lhs.indexOf('url(') === 0 && rhs.indexOf('url(') === 0) {
+                    if (lhs.indexOf('"') > -1 || rhs.indexOf('"') > -1) {
+                        lhs = lhs.replace(/"/g, '');
+                        rhs = rhs.replace(/"/g, '');
+                    }
+                    let lhsUrl = url.parse(lhs.substring(4, lhs.length - 1));
+                    let rhsUrl = url.parse(rhs.substring(4, rhs.length - 1));
 
-                if (lhsUrl.path === rhsUrl.path) {
-                    console.log('removing: ' + lhs);
-                    return false;
+                    if (lhsUrl.path === rhsUrl.path) {
+                        console.log('removing: ' + lhs);
+                        return false;
+                    }
                 }
             }
-        }
-        return true;
-    });
-    console.log('2. diff length: ' + diffElement.diff.length);
+            return true;
+        });
+    }
 };
 
 let createOutputJsonForAllPages = function () {
