@@ -1,5 +1,9 @@
-define(["require", "exports", './components/diff-element', './components/diff-element-diff', "./mapping/diff-element"], function (require, exports, diffElement, diffElementDiff, diff_element_1) {
+define(["require", "exports", './components/bs-collapsible-panel', './components/diff-element', './components/diff-element-diff', "./mapping/diff-element", "./FileOperations"], function (require, exports, bsCollapsiblePanel, diffElement, diffElementDiff, diff_element_1, fileOps) {
     "use strict";
+    ko.components.register('bs-collapsible-panel', {
+        viewModel: bsCollapsiblePanel.viewModel,
+        template: bsCollapsiblePanel.template
+    });
     ko.components.register('diff-element', {
         viewModel: diffElement.viewModel,
         template: diffElement.template
@@ -11,34 +15,13 @@ define(["require", "exports", './components/diff-element', './components/diff-el
     var ViewModel = function () {
         var self = this;
         self.loadFile = function () {
-            var input, file, fr;
-            if (typeof window.FileReader !== 'function') {
-                alert("The file API isn't supported on this browser yet.");
-                return;
-            }
-            input = document.getElementById('fileinput');
-            if (!input) {
-                alert("Um, couldn't find the fileinput element.");
-            }
-            else if (!input.files) {
-                alert("This browser doesn't seem to support the `files` property of file inputs.");
-            }
-            else if (!input.files[0]) {
-                alert("Please select a file before clicking 'Load'");
-            }
-            else {
-                file = input.files[0];
-                fr = new FileReader();
-                fr.onload = receivedText;
-                fr.readAsText(file);
-            }
-            function receivedText(e) {
+            fileOps.loadFile('fileinput', function (e) {
                 var lines = e.target.result;
                 var mappingOptions = {
                     'elementsToTest': diff_element_1.diffElementMapper
                 };
                 ko.mapping.fromJSON(lines, mappingOptions, self.data);
-            }
+            });
         };
         self.data = {
             original: ko.observable('loading...'),

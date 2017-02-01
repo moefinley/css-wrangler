@@ -1,4 +1,5 @@
-interface DiffElement {
+interface IDiffElement {
     selector: string;
-    diff:deepDiff.IDiff;
+    elementDiffs: IDiffElementDiff[]
+    styleDiffs: IDiffElementDiff[]
 }

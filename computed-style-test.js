@@ -20,12 +20,17 @@ const DiffElement = function (selector) {
     self.diff = {};
 };
 
+const elementsToCheck = [
+    new DiffElement('.xhr-header-container'),
+    new DiffElement('.xhr-footer-container')
+];
+
 const config = {
     beforeUrl: "consumer.xperthrsystest.rbidev.ds",
     afterUrl: "consumer.xperthrlocal.rbidev.ds",
     pages: [
-        new Page('home', 'Home', '/', [new DiffElement('.xhr-header-container')]),
-        new Page('employment-law-manual', 'Employment law manual', '/employment-law-manual/', [new DiffElement('.xhr-header-container')])
+        new Page('home', 'Home', '/', elementsToCheck),
+        new Page('employment-law-manual', 'Employment law manual', '/employment-law-manual/', elementsToCheck.concat([new DiffElement('#toolNavigationHeadings')]))
     ],
     outputPath: 'd:/output.txt'
 };
