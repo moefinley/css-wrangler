@@ -38,7 +38,11 @@
                 <a data-bind="attr: {href:('#'+id())}" role="button" data-toggle="collapse"
                    aria-expanded="false" aria-controls="collapseExample">
                     <span data-bind="text:name"></span>
-                    <span class="badge pull-right" data-bind="text: elementsToTest().length"></span>
+                    <span class="pull-right">
+                        Elements: <span class="label label-as-badge label-default" data-bind="text: elementsWithElementChangesCount"></span>
+                        Styles: <span class="label label-as-badge" data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 1, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
+                    </span>
+
                 </a>
             </h4>
         </div>

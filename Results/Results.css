@@ -2,4 +2,7 @@
   max-width: 200px;
   text-overflow: ellipsis; }
 
+.label-as-badge {
+  border-radius: 10px; }
+
 /*# sourceMappingURL=Results.css.map */

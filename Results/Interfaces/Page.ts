@@ -2,5 +2,7 @@ interface IPage {
     id: string;
     name: string;
     url: string;
-    elementsToTest: string;
+    elementsWithStyleChangesCount: number;
+    elementsWithElementChangesCount: number;
+    elementsToTest: IDiffElement[];
 }

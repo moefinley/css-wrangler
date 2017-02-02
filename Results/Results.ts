@@ -1,8 +1,8 @@
 import * as bsCollapsiblePanel from './components/bs-collapsible-panel';
 import * as diffElement from './components/diff-element';
 import * as diffElementDiff from './components/diff-element-diff';
-import {diffElementMapper} from "./mapping/diff-element";
 import * as fileOps from "./FileOperations";
+import {mappingOptions} from "./Mapping";
 
 declare global {
     interface Window {
@@ -28,9 +28,7 @@ const ViewModel = function (): void {
 
     self.loadFile = ()=>{fileOps.loadFile('fileinput', (e)=>{
         let lines = e.target.result;
-        let mappingOptions = {
-            'elementsToTest': diffElementMapper
-        };
+
         ko.mapping.fromJSON(lines, mappingOptions, self.data);
     })};
     self.data = {

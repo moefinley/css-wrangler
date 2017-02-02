@@ -1,4 +1,4 @@
-define(["require", "exports", './components/bs-collapsible-panel', './components/diff-element', './components/diff-element-diff', "./mapping/diff-element", "./FileOperations"], function (require, exports, bsCollapsiblePanel, diffElement, diffElementDiff, diff_element_1, fileOps) {
+define(["require", "exports", './components/bs-collapsible-panel', './components/diff-element', './components/diff-element-diff', "./FileOperations", "./Mapping"], function (require, exports, bsCollapsiblePanel, diffElement, diffElementDiff, fileOps, Mapping_1) {
     "use strict";
     ko.components.register('bs-collapsible-panel', {
         viewModel: bsCollapsiblePanel.viewModel,
@@ -17,10 +17,7 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
         self.loadFile = function () {
             fileOps.loadFile('fileinput', function (e) {
                 var lines = e.target.result;
-                var mappingOptions = {
-                    'elementsToTest': diff_element_1.diffElementMapper
-                };
-                ko.mapping.fromJSON(lines, mappingOptions, self.data);
+                ko.mapping.fromJSON(lines, Mapping_1.mappingOptions, self.data);
             });
         };
         self.data = {
