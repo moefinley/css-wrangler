@@ -1,8 +1,8 @@
-#Basic implementation of Frozen DOM/Computed Style testing
+# Basic implementation of Frozen DOM/Computed Style testing
  
- ##Roadmap 
+ ## Roadmap 
  
- ###Short term
+ ### Short term
  - Move the load file form to a dialog box
  - Remove Protractor and replace with a standard Selenium
  - Move page and element configuration to JSON file
@@ -10,6 +10,6 @@
  - Create shorter XPaths by looking for a parent ID
  - Save the name of the config file used to produce the diffs
  
- ###Long term
+ ### Long term
  - Save data to database instead of file
  - Make the consumer site faster by lazy loading data from database
