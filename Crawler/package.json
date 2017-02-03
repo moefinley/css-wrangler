@@ -1,5 +1,5 @@
 {
-  "name": "frozen-dom-testing",
+  "name": "frozen-dom-testing-crawler",
   "version": "1.0.0",
   "description": "",
   "main": "conf.js",
@@ -10,14 +10,13 @@
   "license": "ISC",
   "devDependencies": {
     "@types/deep-diff": "0.0.30",
-    "@types/jasmine": "^2.5.40",
-    "@types/knockout": "^3.4.39",
-    "@types/knockout.mapping": "^2.0.28",
     "@types/protractor": "^4.0.0",
     "@types/selenium-webdriver": "^2.53.39",
     "protractor": "^5.0.0"
   },
   "dependencies": {
-    "deep-diff": "latest"
+    "@types/nopt": "^3.0.29",
+    "deep-diff": "latest",
+    "nopt": "^4.0.1"
   }
 }

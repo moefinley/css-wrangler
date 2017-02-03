@@ -1,0 +1,16 @@
+{
+  "name": "frozen-dom-testing-results",
+  "version": "1.0.0",
+  "description": "",
+  "main": "Results.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/knockout": "^3.4.39",
+    "@types/knockout.mapping": "^2.0.28",
+    "@types/deep-diff": "0.0.30"
+  }
+}
