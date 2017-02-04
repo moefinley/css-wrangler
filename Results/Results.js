@@ -12,10 +12,12 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
         viewModel: diffElementDiff.viewModel,
         template: diffElementDiff.template
     });
+    var $fileInputModal = $('#fileInputModal');
     var ViewModel = function () {
         var self = this;
         self.loadFile = function () {
             fileOps.loadFile('fileinput', function (e) {
+                $fileInputModal.modal('hide');
                 var lines = e.target.result;
                 ko.mapping.fromJSON(lines, Mapping_1.mappingOptions, self.data);
             });
@@ -36,6 +38,9 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
         });
         return self;
     };
+    $(function () {
+        $fileInputModal.modal();
+    });
     ko.applyBindings(new ViewModel());
 });
 //# sourceMappingURL=Results.js.map

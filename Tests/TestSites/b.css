@@ -7,6 +7,9 @@ p {
 ul {
   list-style: decimal-leading-zero; }
 
+#paragraphElement {
+  background-color: #664558; }
+
 ul {
   list-style: disc; }
 

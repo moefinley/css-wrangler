@@ -8,7 +8,7 @@ export let template = `
             </h4>
         </div>
         <div class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" data-bind="attr: {id: id, 'aria-labelledby': 'heading' + id}, css: {'in': isExpanded}, foreach: panelNodes">
-            <div class="panel-body" data-bind="template: { nodes: [$data]}">
+            <div class="panel-body" data-bind="template: { nodes: [$data], data: $parent }">
             
             </div>
         </div>
@@ -17,9 +17,13 @@ export let template = `
 export let viewModel = {
     createViewModel: function (params, componentInfo) {
         let self = this;
-        self.params = params;
-        self.isExpanded = params.isExpanded;
-        self.id = 'collapse' + Math.round(Math.random() * 100);
+        Object.keys(params).forEach(k => self[k] = params[k]);
+        if(!self.hasOwnProperty('isExpanded')){
+            self.isExpanded = false;
+        }
+        if(!self.hasOwnProperty('id')){
+            self.id = 'collapse' + Math.round(Math.random() * 100);
+        }
         componentInfo.templateNodes = componentInfo.templateNodes.filter(e => e.nodeType !== 3);
         self.panelHeadingNode = componentInfo.templateNodes.splice(componentInfo.templateNodes.findIndex(e => e.classList.contains('panel-heading')), 1);
         self.panelNodes = componentInfo.templateNodes;

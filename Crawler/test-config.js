@@ -7,7 +7,7 @@ exports.crawlerConfig = {
             id: 'home',
             name: 'Home page',
             path: '',
-            elementsToTest: ['body']
+            elementsToTest: ['h1', '#paragraphElement', '#listElement']
         }
     ],
     outputPath: 'g:/output.txt'

@@ -13,15 +13,31 @@
     <script src="libs/require.js" data-main="Results.js"></script>
 </head>
 <body>
-<form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="form-inline">
+<div class="modal fade in" id="fileInputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-show="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
 
-    <fieldset class="form-group">
-        <label for="fileinput">Select a JSON file</label>
-        <input type="file" id="fileinput">
-        <input type="button" id="btnLoad" value="Load" data-bind="click: loadFile" class="btn btn-default">
-    </fieldset>
+                <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="form-inline">
 
-</form>
+                    <fieldset class="form-group">
+                        <label for="fileinput">Select a JSON file</label>
+                        <input type="file" id="fileinput">
+                    </fieldset>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" id="btnLoad" value="Load" data-bind="click: loadFile"
+                       class="btn btn-default" data-toggle="modal" data-target="fileInputModal">
+            </div>
+        </div>
+    </div>
+</div>
+</div>
 <hr/>
 <dl class="dl-horizontal">
     <dt>Original</dt>
@@ -39,8 +55,10 @@
                    aria-expanded="false" aria-controls="collapseExample">
                     <span data-bind="text:name"></span>
                     <span class="pull-right">
-                        Elements: <span class="label label-as-badge label-default" data-bind="text: elementsWithElementChangesCount"></span>
-                        Styles: <span class="label label-as-badge" data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 1, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
+                        Elements: <span class="label label-as-badge label-default"
+                                        data-bind="text: elementsWithElementChangesCount"></span>
+                        Styles: <span class="label label-as-badge"
+                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 1, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
                     </span>
 
                 </a>
@@ -50,7 +68,8 @@
             <div class="panel">
                 <div class="well">
                     <!-- ko foreach: elementsToTest -->
-                    <div data-bind="component: {name: 'diff-element', params: $data}"></div>
+                        <span class="panel-heading" data-bind="text: selector"></span>
+                        <div data-bind="component: {name: 'diff-element', params: $data}"></div>
                     <!-- /ko -->
                 </div>
             </div>

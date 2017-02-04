@@ -21,7 +21,7 @@ export var template = `
             </tr>
             </thead>
             <tbody>
-            <!-- ko foreach: $parent.params.elementDiffs -->
+            <!-- ko foreach: elementDiffs -->
             <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}"></tr>
             <!-- /ko -->
             </tbody>
@@ -39,7 +39,7 @@ export var template = `
             </tr>
             </thead>
             <tbody>
-            <!-- ko foreach: $parent.params.styleDiffs -->
+            <!-- ko foreach: styleDiffs -->
             <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}"></tr>
             <!-- /ko -->
             </tbody>

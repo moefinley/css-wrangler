@@ -22,11 +22,13 @@ ko.components.register('diff-element-diff', {
     viewModel: diffElementDiff.viewModel,
     template: diffElementDiff.template
 });
+let $fileInputModal = $('#fileInputModal');
 
 const ViewModel = function (): void {
     var self = this;
 
     self.loadFile = ()=>{fileOps.loadFile('fileinput', (e)=>{
+        $fileInputModal.modal('hide');
         let lines = e.target.result;
 
         ko.mapping.fromJSON(lines, mappingOptions, self.data);
@@ -47,4 +49,8 @@ const ViewModel = function (): void {
 
     return self;
 };
+
+$(function(){
+    $fileInputModal.modal();
+});
 ko.applyBindings(new ViewModel());
