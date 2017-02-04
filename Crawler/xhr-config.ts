@@ -3,7 +3,7 @@ let elementsToCheck = [
     'xhr-footer-container'
 ];
 
-export const styleConfig = {
+export const crawlerConfig = {
     beforeUrl: "consumer.xperthrsystest.rbidev.ds",
     afterUrl: "consumer.xperthrlocal.rbidev.ds",
     pages: [

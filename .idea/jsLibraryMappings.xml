@@ -3,5 +3,6 @@
   <component name="JavaScriptLibraryMappings">
     <includedPredefinedLibrary name="ECMAScript 6" />
     <includedPredefinedLibrary name="Node.js Core" />
+    <excludedPredefinedLibrary name="FrozenDomTesting/Crawler/node_modules" />
   </component>
 </project>

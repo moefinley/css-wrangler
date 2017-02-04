@@ -1,4 +1,4 @@
-export const styleConfig = {
+export const crawlerConfig = {
     beforeUrl: "127.0.0.1:8080/a.html",
     afterUrl: "127.0.0.1:8080/b.html",
     pages: [

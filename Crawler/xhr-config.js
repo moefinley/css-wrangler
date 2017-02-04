@@ -3,7 +3,7 @@ let elementsToCheck = [
     'xhr-header-container',
     'xhr-footer-container'
 ];
-exports.styleConfig = {
+exports.crawlerConfig = {
     beforeUrl: "consumer.xperthrsystest.rbidev.ds",
     afterUrl: "consumer.xperthrlocal.rbidev.ds",
     pages: [

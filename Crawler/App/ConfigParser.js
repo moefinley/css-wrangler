@@ -30,7 +30,6 @@ const nopt = require('nopt');
 const path = require('path');
 let noptConfigKnownOpts = { "config": path };
 let parsed = nopt(noptConfigKnownOpts, {}, process.argv, 2);
-console.log(parsed);
-let rawConfig = require(parsed.config).styleConfig;
+let rawConfig = require(parsed.config).crawlerConfig;
 exports.crawlerConfig = new CrawlerConfig(rawConfig);
 //# sourceMappingURL=ConfigParser.js.map
