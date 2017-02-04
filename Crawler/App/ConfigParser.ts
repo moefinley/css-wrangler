@@ -1,53 +1,75 @@
-interface DiffElementSource {
+/* External config file interfaces */
+interface IPageExtConfig {
+    id: string;
+    name: string;
+    path: string;
+    elementsToTest: string[];
+}
+
+interface ICrawlerExtConfig {
+    beforeUrl: string;
+    afterUrl: string;
+    pages: IPageExtConfig[];
+    outputPath: string;
+}
+
+/* Internal config object interfaces */
+interface ICrawlerInternalConfig {
+    beforeUrl: string;
+    afterUrl: string;
+    pages: Page[];
+    outputPath: string //TODO make this a path passed in as an argument
+}
+
+interface IDiffElement {
     selector: string;
     original: any;
     comparand: any;
     diff:deepDiff.IDiff[];
 }
 
-interface IPageSource {
-    id: string;
-    name: string;
-    url: string;
-    elementsToTest: DiffElementSource[];
-}
-
-interface ICrawlerConfig {
-    beforeUrl: string;
-    afterUrl: string;
-    pages: IPageSource[];
-    outputPath: string;
-}
-
 class Page {
+    public elementsToTest:DiffElement[] = [];
     constructor (
         public id:string,
         public name: string,
         public url:string,
-        public elementsToTest:DiffElement[]) {
+        elementsToTest:string[]
+    ){
+        elementsToTest.forEach(e => this.elementsToTest.push(new DiffElement(e)));
     }
 }
 
-class DiffElement {
+class DiffElement implements IDiffElement{
     public original: any = {};
-    public comparend: any = {};
-    public diff:deepDiff.IDiff;
+    public comparand: any = {};
+    public diff:deepDiff.IDiff[] = [];
     constructor (public selector: string) {
+
     };
+}
+
+class CrawlerConfig implements ICrawlerInternalConfig {
+    public beforeUrl: string;
+    public afterUrl: string;
+    public pages: Page[] = [];
+    public outputPath: string;
+    constructor(rawConfig:ICrawlerExtConfig){
+        this.beforeUrl = rawConfig.beforeUrl;
+        this.afterUrl = rawConfig.afterUrl;
+        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest)));
+        this.outputPath = rawConfig.outputPath;
+    }
 }
 
 import * as nopt from 'nopt';
 import * as path from 'path';
 
-let knownOpts = { "config" : path };
-let parsed = <any>nopt(knownOpts, {}, process.argv, 2);
+let noptConfigKnownOpts = { "config" : path };
+let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 console.log(parsed);
 
-let rawConfig = require(parsed.config);
+let rawConfig = <ICrawlerExtConfig>require(parsed.config).styleConfig;
+export const crawlerConfig = new CrawlerConfig(rawConfig);
 
-class CrawlerConfig implements ICrawlerConfig {
-    constructor(){
-
-    }
-}
 

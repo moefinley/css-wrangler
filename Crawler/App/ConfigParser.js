@@ -4,25 +4,33 @@ class Page {
         this.id = id;
         this.name = name;
         this.url = url;
-        this.elementsToTest = elementsToTest;
+        this.elementsToTest = [];
+        elementsToTest.forEach(e => this.elementsToTest.push(new DiffElement(e)));
     }
 }
 class DiffElement {
     constructor(selector) {
         this.selector = selector;
         this.original = {};
-        this.comparend = {};
+        this.comparand = {};
+        this.diff = [];
     }
     ;
 }
-const nopt = require('nopt');
-const path = require('path');
-let knownOpts = { "config": path };
-let parsed = nopt(knownOpts, {}, process.argv, 2);
-console.log(parsed);
-let rawConfig = require(parsed.config);
 class CrawlerConfig {
-    constructor() {
+    constructor(rawConfig) {
+        this.pages = [];
+        this.beforeUrl = rawConfig.beforeUrl;
+        this.afterUrl = rawConfig.afterUrl;
+        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest)));
+        this.outputPath = rawConfig.outputPath;
     }
 }
+const nopt = require('nopt');
+const path = require('path');
+let noptConfigKnownOpts = { "config": path };
+let parsed = nopt(noptConfigKnownOpts, {}, process.argv, 2);
+console.log(parsed);
+let rawConfig = require(parsed.config).styleConfig;
+exports.crawlerConfig = new CrawlerConfig(rawConfig);
 //# sourceMappingURL=ConfigParser.js.map

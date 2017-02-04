@@ -17,6 +17,7 @@
   "dependencies": {
     "@types/nopt": "^3.0.29",
     "deep-diff": "latest",
-    "nopt": "^4.0.1"
+    "nopt": "^4.0.1",
+    "selenium-webdriver": "^3.0.1"
   }
 }

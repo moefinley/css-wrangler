@@ -1,29 +1,16 @@
 import describe = testing.describe;
 import * as testing from "selenium-webdriver/testing";
-import {config} from './ConfigParser';
-const fs = require('fs');
-const deepDiff = require('deep-diff');
+import {crawlerConfig as config} from './ConfigParser';
+import * as fs from "fs";
+import * as deepDiff from "deep-diff";
+import * as url from "url";
+import * as webdriver from "selenium-webdriver";
 const differ = deepDiff.diff;
-const url = require('url');
 
-declare let browser:any;
-
-
-
-const elementsToCheck = [
-    new DiffElement('.xhr-header-container'),
-    new DiffElement('.xhr-footer-container')
-];
-
-// const config = {
-//     beforeUrl: "consumer.xperthrsystest.rbidev.ds",
-//     afterUrl: "consumer.xperthrlocal.rbidev.ds",
-//     pages: [
-//         new Page('home', 'Home', '/', elementsToCheck),
-//         new Page('employment-law-manual', 'Employment law manual', '/employment-law-manual/', elementsToCheck.concat([new DiffElement('#toolNavigationHeadings')]))
-//     ],
-//     outputPath: 'd:/output.txt'
-// };
+let driver = new webdriver.Builder()
+    .forBrowser('firefox')
+    .withCapabilities(webdriver.Capabilities.firefox())
+    .build();
 
 var getComputedStyles = function (parentElementQuerySelector) {
     /* This is run in the browser and therefore must stay cross compatible */
@@ -97,15 +84,16 @@ var getComputedStyles = function (parentElementQuerySelector) {
     return returnObj;
 };
 
-let compareComputedStyles = function (scope) {
-    browser.ignoreSynchronization = true;
-
-    function getAllElementsComputedStyles(browser, page, url, isOriginal) {
+function unloadSelenium() {
+    driver.close();
+}
+export let compareComputedStyles = function () {
+    function getAllElementsComputedStyles(page, url, isOriginal) {
         let promiseArray = [];
 
-        browser.get(url);
+        driver.get(url);
         for (let diffElement of page.elementsToTest) {
-            promiseArray.push(browser.executeScript(getComputedStyles, diffElement.selector)
+            promiseArray.push(driver.executeScript(getComputedStyles, diffElement.selector)
                 .then((computedStyles) => {
                     console.log(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
                     if (isOriginal) {
@@ -123,8 +111,8 @@ let compareComputedStyles = function (scope) {
         let beforeAndAfterPromises = [];
         let beforePageUrl = "http://" + config.beforeUrl + page.url;
         let afterPageUrl = "http://" + config.afterUrl + page.url;
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(browser, page, beforePageUrl, true));
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(browser, page, afterPageUrl, false));
+        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, beforePageUrl, true));
+        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, afterPageUrl, false));
 
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
             console.log('Diff obj length: ' + allResultsArray.length);
@@ -142,6 +130,7 @@ let compareComputedStyles = function (scope) {
             if (index == (config.pages.length - 1).toString()) {
                 console.log('last page complete');
                 writeToDisk(createOutputJsonForAllPages());
+                unloadSelenium();
             }
         }, (err) => {
             console.log(err);
@@ -195,7 +184,3 @@ let writeToDisk = function (contents) {
     });
 };
 
-/* Application starts */
-describe('CSS computed styles diff testing', function () {
-    compareComputedStyles(this);
-});

@@ -1,24 +1,13 @@
-let elementsToCheck = [
-    'xhr-header-container',
-    'xhr-footer-container'
-];
-
 export const styleConfig = {
-    beforeUrl: "consumer.xperthrsystest.rbidev.ds",
-    afterUrl: "consumer.xperthrlocal.rbidev.ds",
+    beforeUrl: "127.0.0.1:8080/a.html",
+    afterUrl: "127.0.0.1:8080/b.html",
     pages: [
         {
             id: 'home',
-            name: 'Home page of XpertHR',
-            path: '/',
-            elementsToCheck: elementsToCheck
-        },
-        {
-            id: 'employement-law-manual',
-            name: 'XpertHRs Employment Law Manual',
-            path: '/employment-law-manual/',
-            elementsToCheck: elementsToCheck.concat(['#toolNavigationHeadings'])
+            name: 'Home page',
+            path: '',
+            elementsToTest: ['body']
         }
     ],
-    outputPath: 'd:/output.txt'
+    outputPath: 'g:/output.txt'
 };
