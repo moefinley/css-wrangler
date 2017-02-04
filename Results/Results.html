@@ -58,7 +58,7 @@
                         Elements: <span class="label label-as-badge label-default"
                                         data-bind="text: elementsWithElementChangesCount"></span>
                         Styles: <span class="label label-as-badge"
-                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 1, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
+                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 0, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
                     </span>
 
                 </a>
@@ -69,7 +69,15 @@
                 <div class="well">
                     <!-- ko foreach: elementsToTest -->
                         <bs-collapsible-panel params="diffElement:$data, id:'bsCs' + selector.substring(1,selector.length)">
-                            <span class="panel-heading" data-bind="text: diffElement.selector"></span>
+                            <span class="panel-heading">
+                                <span data-bind="text: diffElement.selector"></span>
+                                <span class="pull-right">
+                                    Elements: <span class="label label-as-badge label-default"
+                                                    data-bind="text: diffElement.elementDiffs.length"></span>
+                                    Styles: <span class="label label-as-badge"
+                                                  data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-default':  diffElement.styleDiffs.length < 1}"></span>
+                                </span>
+                            </span>
                             <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
                         </bs-collapsible-panel>
                     <!-- /ko -->
