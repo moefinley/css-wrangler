@@ -16,12 +16,12 @@ export let template = `
 `;
 export let viewModel = {
     createViewModel: function (params, componentInfo) {
-        let self = this;
+        let self:any = {};
         Object.keys(params).forEach(k => self[k] = params[k]);
         if(!self.hasOwnProperty('isExpanded')){
             self.isExpanded = false;
         }
-        if(!self.hasOwnProperty('id')){
+        if(!self.hasOwnProperty('id')) {
             self.id = 'collapse' + Math.round(Math.random() * 100);
         }
         componentInfo.templateNodes = componentInfo.templateNodes.filter(e => e.nodeType !== 3);

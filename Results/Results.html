@@ -68,8 +68,10 @@
             <div class="panel">
                 <div class="well">
                     <!-- ko foreach: elementsToTest -->
-                        <span class="panel-heading" data-bind="text: selector"></span>
-                        <div data-bind="component: {name: 'diff-element', params: $data}"></div>
+                        <bs-collapsible-panel params="diffElement:$data, id:'bsCs' + selector.substring(1,selector.length)">
+                            <span class="panel-heading" data-bind="text: diffElement.selector"></span>
+                            <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
+                        </bs-collapsible-panel>
                     <!-- /ko -->
                 </div>
             </div>

@@ -7,8 +7,7 @@ export function viewModel(diffElement: IDiffElement) {
     self.elementDiffs = diffElement.elementDiffs;
     self.styleDiffs = diffElement.styleDiffs;
 }
-export var template = `
-<h3 data-bind="text: selector"></h3>
+export let template = `
 <bs-collapsible-panel params="elementDiffs: elementDiffs, isExpanded: false">
     <span class="panel-heading">Element changes</span>
     <table class="table table-striped">
