@@ -68,6 +68,12 @@ import * as path from 'path';
 let noptConfigKnownOpts = { "config" : path };
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
+/*
+ * Todo:
+ * Save the config's file name for reference in the final results
+ * Check all values have been provided
+ * Check all page IDs are unique and correct syntax
+ */
 let rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
 export const crawlerConfig = new CrawlerConfig(rawConfig);
 

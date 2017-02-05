@@ -1,6 +1,6 @@
 {
 "version": 3,
-"mappings": "AACI,kBAAM;EACF,SAAS,EAAE,KAAK;EAChB,aAAa,EAAE,QAAQ;;AAI/B,eAAgB;EACZ,aAAa,EAAE,IAAI",
+"mappings": "AACI,kBAAM;EACF,SAAS,EAAE,KAAK;EAChB,aAAa,EAAE,QAAQ;;AAI/B,YAAa;EACT,aAAa,EAAE,CAAC;;AAGpB,eAAgB;EACZ,aAAa,EAAE,IAAI;EACnB,OAAO,EAAE,gBAAgB",
 "sources": ["Results.scss"],
 "names": [],
 "file": "Results.css"

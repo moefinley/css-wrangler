@@ -14,7 +14,7 @@ export let template = `
             <thead>
             <tr>
                 <th>Kind</th>
-                <th>Property</th>
+                <th>Path to property<br/><small>XPaths represent an element</small></th>
                 <th>Original</th>
                 <th>Comparand</th>
             </tr>
@@ -32,7 +32,7 @@ export let template = `
             <thead>
             <tr>
                 <th>Kind</th>
-                <th>Property</th>
+                <th>Property<br/><small>XPaths represent an element</small></th>
                 <th>Original</th>
                 <th>Comparand</th>
             </tr>

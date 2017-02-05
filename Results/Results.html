@@ -13,7 +13,8 @@
     <script src="libs/require.js" data-main="Results.js"></script>
 </head>
 <body>
-<div class="modal fade in" id="fileInputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" data-show="true">
+<div class="modal fade in" id="fileInputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-show="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -37,67 +38,69 @@
         </div>
     </div>
 </div>
-</div>
-<hr/>
-<dl class="dl-horizontal">
-    <dt>Original</dt>
-    <dd data-bind="text: data.original"></dd>
-    <dt>Comparator</dt>
-    <dd data-bind="text: data.comparator"></dd>
-    <dt>Date</dt>
-    <dd data-bind="text: convertedDate"></dd>
-</dl>
-<div data-bind="foreach:data.pages">
-    <div class="panel panel-default">
-        <div class="panel-heading" role="tab" id="headingOne">
-            <h4 class="panel-title">
-                <a data-bind="attr: {href:('#'+id())}" role="button" data-toggle="collapse"
-                   aria-expanded="false" aria-controls="collapseExample">
-                    <span data-bind="text:name"></span>
-                    <span class="pull-right">
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <section>
+            <header>
+                <h1>Results for:</h1>
+                <dl class="dl-horizontal">
+                    <dt>Original</dt>
+                    <dd data-bind="text: data.original"></dd>
+                    <dt>Comparator</dt>
+                    <dd data-bind="text: data.comparator"></dd>
+                    <dt>Date</dt>
+                    <dd data-bind="text: convertedDate"></dd>
+                </dl>
+            </header>
+            <article>
+                <h2>Pages:</h2>
+                <div data-bind="foreach:data.pages">
+                    <div class="panel panel-default">
+                        <div class="panel-heading" role="tab" id="headingOne">
+                            <h4 class="panel-title">
+                                <span class="glyphicon glyphicon-file"></span>
+                                <a data-bind="attr: {href:('#'+id())}" role="button" data-toggle="collapse"
+                                   aria-expanded="false" aria-controls="collapseExample">
+                                    <span data-bind="text:name"></span>
+                                    <span class="pull-right">
                         Elements: <span class="label label-as-badge label-default"
                                         data-bind="text: elementsWithElementChangesCount"></span>
                         Styles: <span class="label label-as-badge"
                                       data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 0, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
                     </span>
 
-                </a>
-            </h4>
-        </div>
-        <div class="panel-collapse collapse" data-bind="attr: {id:id}">
-            <div class="panel">
-                <div class="well">
-                    <!-- ko foreach: elementsToTest -->
-                        <bs-collapsible-panel params="diffElement:$data, id:'bsCs' + selector.substring(1,selector.length)">
-                            <span class="panel-heading">
-                                <span data-bind="text: diffElement.selector"></span>
-                                <span class="pull-right">
-                                    Elements: <span class="label label-as-badge label-default"
-                                                    data-bind="text: diffElement.elementDiffs.length"></span>
-                                    Styles: <span class="label label-as-badge"
-                                                  data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-default':  diffElement.styleDiffs.length < 1}"></span>
-                                </span>
-                            </span>
-                            <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
-                        </bs-collapsible-panel>
-                    <!-- /ko -->
+                                </a>
+                            </h4>
+                        </div>
+                        <div class="panel-collapse collapse" data-bind="attr: {id:id}">
+                            <div class="panel">
+                                <div class="well">
+                                    <!-- ko foreach: elementsToTest -->
+                                    <bs-collapsible-panel
+                                            params="diffElement:$data">
+                                        <span class="panel-heading">
+                                            <span data-bind="text: diffElement.selector"></span>
+                                            <span class="pull-right">
+                                                Elements: <span class="label label-as-badge label-default"
+                                                                data-bind="text: diffElement.elementDiffs.length"></span>
+                                                Styles: <span class="label label-as-badge"
+                                                              data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-default':  diffElement.styleDiffs.length < 1}"></span>
+                                            </span>
+                                        </span>
+                                        <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
+                                    </bs-collapsible-panel>
+                                    <!-- /ko -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
+            </article>
+        </section>
     </div>
 </div>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
-<br/>
+
 <!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
 </body>
 </html>

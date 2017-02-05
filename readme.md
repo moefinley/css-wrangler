@@ -48,11 +48,13 @@ Potentially there are more style changes within these elements but without somet
 ## Roadmap 
  
 ### Short term
- - Move the load file form to a dialog box
- - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
+ - Get the ConfigParser.ts to validate the config file
+ - Save the name of the config file used to produce the diffs
  - Break down ComputedStyleTest.ts into separate concerns
  - Create shorter XPaths by looking for a parent ID
- - Save the name of the config file used to produce the diffs
+ - Capture Selenium errors and translate them to more user friendly errors
+    + Selenium error 'element can't be found' should list the element selector and the current page
+ - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
  
 ### Long term
  - Save data to database instead of JSON file

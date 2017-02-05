@@ -1,13 +1,20 @@
 "use strict";
+const sharedElementsToTest = ['h1', '#paragraphElement', '#listElement'];
 exports.crawlerConfig = {
-    beforeUrl: "127.0.0.1:8080/a.html",
-    afterUrl: "127.0.0.1:8080/b.html",
+    beforeUrl: "127.0.0.1:8080/a",
+    afterUrl: "127.0.0.1:8080/b",
     pages: [
         {
             id: 'home',
             name: 'Home page',
-            path: '',
-            elementsToTest: ['h1', '#paragraphElement', '#listElement']
+            path: '/home.html',
+            elementsToTest: sharedElementsToTest
+        },
+        {
+            id: 'about',
+            name: 'About page',
+            path: '/about.html',
+            elementsToTest: sharedElementsToTest.concat(['#aboutFooter'])
         }
     ],
     outputPath: 'g:/output.txt'
