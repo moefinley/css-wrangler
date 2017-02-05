@@ -55,6 +55,9 @@ Potentially there are more style changes within these elements but without somet
  - Capture Selenium errors and translate them to more user friendly errors
     + Selenium error 'element can't be found' should list the element selector and the current page
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
+
+### Medium term
+ - Allow Selenium commands and/or JavaScript functions to be run on the page before gathering computed styles. This would allow for JavaScript features to be tested. 
  
 ### Long term
  - Save data to database instead of JSON file
