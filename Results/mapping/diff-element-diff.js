@@ -4,8 +4,8 @@ define(["require", "exports"], function (require, exports) {
         function DiffElementDiff(deepDiffObj) {
             this.deepDiffObj = deepDiffObj;
             this.path = !!deepDiffObj.path ? deepDiffObj.path.join(', ') : "no path";
-            this.rhs = !!deepDiffObj.lhs ? deepDiffObj.lhs.toString() : "---";
-            this.lhs = !!deepDiffObj.rhs ? deepDiffObj.rhs.toString() : "---";
+            this.lhs = !!deepDiffObj.lhs ? deepDiffObj.lhs.toString() : "---";
+            this.rhs = !!deepDiffObj.rhs ? deepDiffObj.rhs.toString() : "---";
             this.isElement = (!!deepDiffObj.lhs && !!deepDiffObj.lhs.styleProperties)
                 || (!!deepDiffObj.rhs && !!deepDiffObj.rhs.styleProperties);
         }

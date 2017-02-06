@@ -8,8 +8,8 @@ import * as webdriver from "selenium-webdriver";
 const differ = deepDiff.diff;
 
 let driver = new webdriver.Builder()
-    .forBrowser('firefox')
-    .withCapabilities(webdriver.Capabilities.firefox())
+    .forBrowser('chrome')
+    .withCapabilities(webdriver.Capabilities.chrome())
     .build();
 
 var getComputedStyles = function (parentElementQuerySelector) {

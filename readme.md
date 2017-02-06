@@ -48,8 +48,9 @@ Potentially there are more style changes within these elements but without somet
 ## Roadmap 
  
 ### Short term
- - Get the ConfigParser.ts to validate the config file
+ - List pages that ran but had no differences
  - Save the name of the config file used to produce the diffs
+ - Get the ConfigParser.ts to validate the config file
  - Break down ComputedStyleTest.ts into separate concerns
  - Create shorter XPaths by looking for a parent ID
  - Capture Selenium errors and translate them to more user friendly errors
@@ -57,6 +58,7 @@ Potentially there are more style changes within these elements but without somet
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
 
 ### Medium term
+ - Allow the gathering of a/b computed styles and the comparision to happen at separate times
  - Allow Selenium commands and/or JavaScript functions to be run on the page before gathering computed styles. This would allow for JavaScript features to be tested. 
  
 ### Long term

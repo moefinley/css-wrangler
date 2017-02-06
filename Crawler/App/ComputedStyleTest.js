@@ -6,8 +6,8 @@ const url = require("url");
 const webdriver = require("selenium-webdriver");
 const differ = deepDiff.diff;
 let driver = new webdriver.Builder()
-    .forBrowser('firefox')
-    .withCapabilities(webdriver.Capabilities.firefox())
+    .forBrowser('chrome')
+    .withCapabilities(webdriver.Capabilities.chrome())
     .build();
 var getComputedStyles = function (parentElementQuerySelector) {
     /* This is run in the browser and therefore must stay cross compatible */
