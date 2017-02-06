@@ -1,3 +1,3 @@
 /* Application starts */
-import {compareComputedStyles} from "./App/ComputedStyleTest";
-compareComputedStyles();
+import {init} from "./App/ComputedStyleTest";
+init();

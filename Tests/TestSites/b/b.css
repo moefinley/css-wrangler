@@ -7,6 +7,9 @@ p {
 ul {
   list-style: decimal-leading-zero; }
 
+h1 {
+  background: transparent url("http://assets.xperthrsystest.rbidev.ds/latest/LegacyDesktop/Content/Images/Global/Logo.png"); }
+
 #paragraphElement {
   background-color: #664558; }
 
