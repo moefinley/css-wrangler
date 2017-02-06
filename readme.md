@@ -48,7 +48,6 @@ Potentially there are more style changes within these elements but without somet
 ## Roadmap 
  
 ### Short term
- - List pages that ran but had no differences
  - Save the name of the config file used to produce the diffs
  - Get the ConfigParser.ts to validate the config file
  - Break down ComputedStyleTest.ts into separate concerns

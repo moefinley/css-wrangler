@@ -64,12 +64,11 @@
                                    aria-expanded="false" aria-controls="collapseExample">
                                     <span data-bind="text:name"></span>
                                     <span class="pull-right">
-                        Elements: <span class="label label-as-badge label-default"
-                                        data-bind="text: elementsWithElementChangesCount"></span>
-                        Styles: <span class="label label-as-badge"
-                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 0, 'label-default': elementsWithStyleChangesCount() < 1}"></span>
-                    </span>
-
+                                        Elements: <span class="label label-as-badge label-default"
+                                                        data-bind="text: elementsWithElementChangesCount, css: {'label-warning': elementsWithElementChangesCount() > 0, 'label-success': elementsWithElementChangesCount() < 1}"></span>
+                                        Styles: <span class="label label-as-badge"
+                                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 0, 'label-success': elementsWithStyleChangesCount() < 1}"></span>
+                                    </span>
                                 </a>
                             </h4>
                         </div>
@@ -83,9 +82,9 @@
                                             <span data-bind="text: diffElement.selector"></span>
                                             <span class="pull-right">
                                                 Elements: <span class="label label-as-badge label-default"
-                                                                data-bind="text: diffElement.elementDiffs.length"></span>
+                                                                data-bind="text: diffElement.elementDiffs.length, css: {'label-warning': diffElement.elementDiffs.length > 0, 'label-success': diffElement.elementDiffs.length < 1}"></span>
                                                 Styles: <span class="label label-as-badge"
-                                                              data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-default':  diffElement.styleDiffs.length < 1}"></span>
+                                                              data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
                                             </span>
                                         </span>
                                         <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>

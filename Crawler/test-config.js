@@ -15,8 +15,14 @@ exports.crawlerConfig = {
             name: 'About page',
             path: '/about.html',
             elementsToTest: sharedElementsToTest.concat(['#aboutFooter'])
+        },
+        {
+            id: 'same',
+            name: 'Same page',
+            path: '/same.html',
+            elementsToTest: sharedElementsToTest
         }
     ],
-    outputPath: 'g:/output.txt'
+    outputPath: 'd:/output.txt'
 };
 //# sourceMappingURL=test-config.js.map
