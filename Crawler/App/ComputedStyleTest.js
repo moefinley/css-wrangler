@@ -62,6 +62,7 @@ exports.init = init;
 ;
 let createOutputJsonForAllPages = function () {
     let output = {
+        configFile: ConfigParser_1.crawlerConfig.configFile,
         date: Date.now(),
         original: ConfigParser_1.crawlerConfig.beforeUrl,
         comparator: ConfigParser_1.crawlerConfig.afterUrl,

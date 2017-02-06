@@ -15,8 +15,10 @@
     "protractor": "^5.0.0"
   },
   "dependencies": {
+    "@types/escape-string-regexp": "0.0.30",
     "@types/nopt": "^3.0.29",
     "deep-diff": "latest",
+    "escape-string-regexp": "^1.0.5",
     "nopt": "^4.0.1",
     "selenium-webdriver": "^3.0.1"
   }

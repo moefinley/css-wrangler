@@ -1,4 +1,5 @@
 /* External config file interfaces */
+import escapeStringRegexp = require("escape-string-regexp");
 interface IPageExtConfig {
     id: string;
     name: string;
@@ -54,7 +55,7 @@ class CrawlerConfig implements ICrawlerInternalConfig {
     public afterUrl: string;
     public pages: Page[] = [];
     public outputPath: string;
-    constructor(rawConfig:ICrawlerExtConfig){
+    constructor(public configFile: string, rawConfig:ICrawlerExtConfig){
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
         rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest)));
@@ -70,11 +71,10 @@ let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
 /*
  * Todo:
- * Save the config's file name for reference in the final results
  * Check all values have been provided
  * Check all page IDs are unique and correct syntax
  */
 let rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
-export const crawlerConfig = new CrawlerConfig(rawConfig);
+export const crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
 
 

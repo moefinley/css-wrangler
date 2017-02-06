@@ -34,6 +34,7 @@ const ViewModel = function (): void {
         ko.mapping.fromJSON(lines, mappingOptions, self.data);
     })};
     self.data = {
+        configFile: ko.observable<string>('loading...'),
         original: ko.observable<string|any>('loading...'),
         comparator: ko.observable<string|any>('loading...'),
         date: ko.observable<string>('loading...'),

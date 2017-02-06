@@ -23,6 +23,7 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
             });
         };
         self.data = {
+            configFile: ko.observable('loading...'),
             original: ko.observable('loading...'),
             comparator: ko.observable('loading...'),
             date: ko.observable('loading...'),

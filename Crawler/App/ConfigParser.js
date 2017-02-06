@@ -18,7 +18,8 @@ class DiffElement {
     ;
 }
 class CrawlerConfig {
-    constructor(rawConfig) {
+    constructor(configFile, rawConfig) {
+        this.configFile = configFile;
         this.pages = [];
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
@@ -32,10 +33,9 @@ let noptConfigKnownOpts = { "config": path };
 let parsed = nopt(noptConfigKnownOpts, {}, process.argv, 2);
 /*
  * Todo:
- * Save the config's file name for reference in the final results
  * Check all values have been provided
  * Check all page IDs are unique and correct syntax
  */
 let rawConfig = require(parsed.config).crawlerConfig;
-exports.crawlerConfig = new CrawlerConfig(rawConfig);
+exports.crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
 //# sourceMappingURL=ConfigParser.js.map

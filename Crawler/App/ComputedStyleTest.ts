@@ -69,6 +69,7 @@ export function init() {
 
 let createOutputJsonForAllPages = function () {
     let output = {
+        configFile: crawlerConfig.configFile,
         date: Date.now(),
         original: crawlerConfig.beforeUrl,
         comparator: crawlerConfig.afterUrl,
