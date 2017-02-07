@@ -55,8 +55,9 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector) {
         thisObject.children = {};
         for (var i = 0; i < thisElementsChildren.length; i++) {
             var childElement = thisElementsChildren[i];
-            thisObject.children[Xpath.getElementXPath(childElement)] = {};
-            iterateThroughChildren(childElement, thisObject.children[Xpath.getElementXPath(childElement)]);
+            var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
+            thisObject.children[xpathOfChild] = {};
+            iterateThroughChildren(childElement, thisObject.children[xpathOfChild]);
         }
     }
     iterateThroughChildren(parentElement, returnObj);

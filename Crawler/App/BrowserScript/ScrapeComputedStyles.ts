@@ -10,14 +10,14 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
         throw 'could not find element';
     }
     var Xpath:any = {};
-    Xpath.getElementXPath = function (element) {
+    Xpath.getElementXPath = function (element):string {
         if (element && element.id)
             return '//*[@id="' + element.id + '"]';
         else
             return Xpath.getElementTreeXPath(element);
     };
 
-    Xpath.getElementTreeXPath = function (element) {
+    Xpath.getElementTreeXPath = function (element):string {
         var paths = [];
 
         // Use nodeName (instead of localName) so namespace prefix is included (if any).
@@ -64,8 +64,9 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
         thisObject.children = {};
         for (var i = 0; i < thisElementsChildren.length; i++) {
             var childElement = thisElementsChildren[i];
-            thisObject.children[Xpath.getElementXPath(childElement)] = {};
-            iterateThroughChildren(childElement, thisObject.children[Xpath.getElementXPath(childElement)]);
+            var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
+            thisObject.children[xpathOfChild] = {};
+            iterateThroughChildren(childElement, thisObject.children[xpathOfChild]);
         }
     }
 

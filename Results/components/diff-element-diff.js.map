@@ -1,1 +1,1 @@
-{"version":3,"file":"diff-element-diff.js","sourceRoot":"","sources":["diff-element-diff.ts"],"names":[],"mappings":";;IAAa,gBAAQ,GAAG,0LAKvB,CAAC,QAAQ,EAAE,CAAC;IACb,mBAA2B,MAAM;QAC7B,MAAM,CAAC,MAAM,CAAC;IAClB,CAAC;IAFe,iBAAS,YAExB,CAAA;IAAA,CAAC"}
+{"version":3,"file":"diff-element-diff.js","sourceRoot":"","sources":["diff-element-diff.ts"],"names":[],"mappings":";;IAAa,gBAAQ,GAAG;;;;;CAKvB,CAAC,QAAQ,EAAE,CAAC;IACb,mBAA2B,MAAM;QAC7B,MAAM,CAAC,MAAM,CAAC;IAClB,CAAC;IAFe,iBAAS,YAExB,CAAA;IAAA,CAAC"}

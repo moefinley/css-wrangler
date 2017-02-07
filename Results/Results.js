@@ -12,13 +12,13 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
         viewModel: diffElementDiff.viewModel,
         template: diffElementDiff.template
     });
-    var $fileInputModal = $('#fileInputModal');
-    var ViewModel = function () {
+    let $fileInputModal = $('#fileInputModal');
+    const ViewModel = function () {
         var self = this;
-        self.loadFile = function () {
-            fileOps.loadFile('fileinput', function (e) {
+        self.loadFile = () => {
+            fileOps.loadFile('fileinput', (e) => {
                 $fileInputModal.modal('hide');
-                var lines = e.target.result;
+                let lines = e.target.result;
                 ko.mapping.fromJSON(lines, Mapping_1.mappingOptions, self.data);
             });
         };

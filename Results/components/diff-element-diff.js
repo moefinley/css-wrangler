@@ -1,6 +1,11 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    exports.template = "\n    <td data-bind=\"text: deepDiffObj.kind\"></td>\n    <td class=\"path\" data-bind=\"text:path\"></td>\n    <td data-bind=\"text:lhs\"></td>\n    <td data-bind=\"text:rhs\"></td>\n".toString();
+    exports.template = `
+    <td data-bind="text: kind"></td>
+    <td class="path" data-bind="text:friendlyPath"></td>
+    <td data-bind="text:lhs"></td>
+    <td data-bind="text:rhs"></td>
+`.toString();
     function viewModel(params) {
         return params;
     }

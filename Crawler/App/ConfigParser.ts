@@ -76,5 +76,3 @@ let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
  */
 let rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
 export const crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
-
-

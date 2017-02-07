@@ -1,24 +1,21 @@
 define(["require", "exports", "../Mapping"], function (require, exports, Mapping_1) {
     "use strict";
-    var Page = (function () {
-        function Page(data) {
-            var _this = this;
+    class Page {
+        constructor(data) {
             this.elementsToTest = [];
             ko.mapping.fromJS(data, Mapping_1.mappingOptions, this);
-            this.elementsWithStyleChangesCount = ko.computed(function () {
-                var count = 0;
-                for (var _i = 0, _a = _this.elementsToTest; _i < _a.length; _i++) {
-                    var diffElement = _a[_i];
+            this.elementsWithStyleChangesCount = ko.computed(() => {
+                let count = 0;
+                for (let diffElement of this.elementsToTest) {
                     if (!!diffElement.styleDiffs) {
                         count += diffElement.styleDiffs.length;
                     }
                 }
                 return count;
             });
-            this.elementsWithElementChangesCount = ko.computed(function () {
-                var count = 0;
-                for (var _i = 0, _a = _this.elementsToTest; _i < _a.length; _i++) {
-                    var diffElement = _a[_i];
+            this.elementsWithElementChangesCount = ko.computed(() => {
+                let count = 0;
+                for (let diffElement of this.elementsToTest) {
                     if (!!diffElement.elementDiffs) {
                         count += diffElement.elementDiffs.length;
                     }
@@ -26,8 +23,7 @@ define(["require", "exports", "../Mapping"], function (require, exports, Mapping
                 return count;
             });
         }
-        return Page;
-    }());
+    }
     exports.Page = Page;
     exports.pageMapper = {
         create: function (options) {
