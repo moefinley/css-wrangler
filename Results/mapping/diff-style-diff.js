@@ -4,6 +4,10 @@ define(["require", "exports", "./diff-generic-diff", "../ViewModel"], function (
         constructor(deepDiffObj) {
             super(deepDiffObj);
             this.deepDiffObj = deepDiffObj;
+            this.isVisible = ko.computed(() => {
+                let index = ViewModel_1.viewModel.filters().findIndex(e => e.property == this.styleProperty);
+                return index > -1 ? ViewModel_1.viewModel.filters()[index].isSelected() : true;
+            });
             this.parseElementPath(deepDiffObj.path);
             if (this.xpath !== null) {
                 this.friendlyPath = `${this.xpath}, ${this.styleProperty}`;
@@ -11,10 +15,7 @@ define(["require", "exports", "./diff-generic-diff", "../ViewModel"], function (
             else {
                 this.friendlyPath = this.styleProperty;
             }
-            this.isVisible = ko.computed(() => {
-                let index = ViewModel_1.viewModel.data.filters().findIndex(e => e.property == this.styleProperty);
-                return index > -1 ? ViewModel_1.viewModel.data.filters()[index].isSelected() : true;
-            });
+            ViewModel_1.viewModel.addFilter(this.styleProperty);
         }
         parseElementPath(rawPath) {
             let pathLength = rawPath.length;

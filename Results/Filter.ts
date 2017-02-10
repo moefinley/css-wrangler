@@ -1,7 +1,7 @@
-export class filter {
+export class Filter {
     constructor(
-        public name:string,
-        public property:string
+        public property:string,
+        public name:string = property
     ){
     }
     public isSelected = ko.observable<boolean>(true);

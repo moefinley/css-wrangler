@@ -8,7 +8,6 @@ export class DiffStyleDiff extends DiffGenericDiff {
     public kind: string;
     public xpath: string;
     public styleProperty: string;
-    public isVisible: KnockoutComputed<boolean>;
 
     constructor(public deepDiffObj: deepDiff.IDiff){
         super(deepDiffObj);
@@ -18,11 +17,13 @@ export class DiffStyleDiff extends DiffGenericDiff {
         } else {
             this.friendlyPath = this.styleProperty;
         }
-        this.isVisible = ko.computed(():boolean=>{
-            let index = viewModel.data.filters().findIndex(e => e.property == this.styleProperty);
-            return index > -1 ? viewModel.data.filters()[index].isSelected() : true;
-        });
+        viewModel.addFilter(this.styleProperty);
     }
+
+    public isVisible = ko.computed<boolean>(():boolean=>{
+        let index = viewModel.filters().findIndex(e => e.property == this.styleProperty);
+        return index > -1 ? viewModel.filters()[index].isSelected() : true;
+    });
 
     private parseElementPath(rawPath:string[]){
         let pathLength = rawPath.length;

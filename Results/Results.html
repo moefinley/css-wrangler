@@ -54,14 +54,12 @@
                     <dt>Date</dt>
                     <dd data-bind="text: convertedDate"></dd>
                 </dl>
-                <ul>
-                    <li data-bind="foreach: data.filters">
-                        <label>
-                            <span data-bind="text: name"></span>
-                            <input type="checkbox" data-bind="checked: isSelected">
-                        </label>
-                    </li>
-                </ul>
+                <div data-bind="foreach: filters">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" data-bind="checked: isSelected">
+                        <span data-bind="text: name"></span>
+                    </label>
+                </div>
             </header>
             <article>
                 <h2>Pages:</h2>
@@ -110,6 +108,6 @@
     </div>
 </div>
 
-<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
+<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
 </body>
 </html>
