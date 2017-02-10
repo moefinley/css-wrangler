@@ -1,4 +1,4 @@
-define(["require", "exports", './components/bs-collapsible-panel', './components/diff-element', './components/diff-element-diff', "./FileOperations", "./Mapping"], function (require, exports, bsCollapsiblePanel, diffElement, diffElementDiff, fileOps, Mapping_1) {
+define(["require", "exports", './components/bs-collapsible-panel', './components/diff-element', './components/diff-element-diff', "./ViewModel"], function (require, exports, bsCollapsiblePanel, diffElement, diffElementDiff, ViewModel_1) {
     "use strict";
     ko.components.register('bs-collapsible-panel', {
         viewModel: bsCollapsiblePanel.viewModel,
@@ -12,36 +12,6 @@ define(["require", "exports", './components/bs-collapsible-panel', './components
         viewModel: diffElementDiff.viewModel,
         template: diffElementDiff.template
     });
-    let $fileInputModal = $('#fileInputModal');
-    const ViewModel = function () {
-        var self = this;
-        self.loadFile = () => {
-            fileOps.loadFile('fileinput', (e) => {
-                $fileInputModal.modal('hide');
-                let lines = e.target.result;
-                ko.mapping.fromJSON(lines, Mapping_1.mappingOptions, self.data);
-            });
-        };
-        self.data = {
-            configFile: ko.observable('loading...'),
-            original: ko.observable('loading...'),
-            comparator: ko.observable('loading...'),
-            date: ko.observable('loading...'),
-            pages: ko.observableArray([])
-        };
-        self.convertedDate = ko.pureComputed(function () {
-            if (self.data.date() != 'loading...') {
-                return new Date(self.data.date()).toString();
-            }
-            else {
-                return self.data.date();
-            }
-        });
-        return self;
-    };
-    $(function () {
-        $fileInputModal.modal();
-    });
-    ko.applyBindings(new ViewModel());
+    ko.applyBindings(ViewModel_1.viewModel);
 });
 //# sourceMappingURL=Results.js.map

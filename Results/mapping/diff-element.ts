@@ -1,4 +1,5 @@
 import {DiffElementDiff} from "./diff-element-diff";
+import {DiffStyleDiff} from "./diff-style-diff";
 class DiffElement implements IDiffElement {
     constructor(
         public selector:string,
@@ -7,6 +8,11 @@ class DiffElement implements IDiffElement {
     ){
 
     }
+    public styleDiffsCount = ko.computed<number>(()=>{
+        return this.styleDiffs.filter((e:DiffStyleDiff)=>{
+            return e.isVisible();
+        }).length;
+    });
 }
 
 interface DiffElementSource {
@@ -23,13 +29,10 @@ export const diffElementMapper = {
             diffElementData.selector
         );
         for(let diff of diffElementData.diff){
-            let newDiffElementDiff = new DiffElementDiff(diff);
+            let isElement = (!!diff.lhs && !!diff.lhs.styleProperties)
+                || (!!diff.rhs && !!diff.rhs.styleProperties);
 
-            if(newDiffElementDiff.isElement){
-                newDiffElement.elementDiffs.push(newDiffElementDiff);
-            } else {
-                newDiffElement.styleDiffs.push(newDiffElementDiff);
-            }
+            isElement ? newDiffElement.elementDiffs.push(new DiffElementDiff(diff)) : newDiffElement.styleDiffs.push(new DiffStyleDiff(diff));
         }
         return newDiffElement;
     }

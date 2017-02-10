@@ -54,6 +54,14 @@
                     <dt>Date</dt>
                     <dd data-bind="text: convertedDate"></dd>
                 </dl>
+                <ul>
+                    <li data-bind="foreach: data.filters">
+                        <label>
+                            <span data-bind="text: name"></span>
+                            <input type="checkbox" data-bind="checked: isSelected">
+                        </label>
+                    </li>
+                </ul>
             </header>
             <article>
                 <h2>Pages:</h2>
@@ -86,7 +94,7 @@
                                                 Elements: <span class="label label-as-badge label-default"
                                                                 data-bind="text: diffElement.elementDiffs.length, css: {'label-warning': diffElement.elementDiffs.length > 0, 'label-success': diffElement.elementDiffs.length < 1}"></span>
                                                 Styles: <span class="label label-as-badge"
-                                                              data-bind="text: diffElement.styleDiffs.length, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
+                                                              data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
                                             </span>
                                         </span>
                                         <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>

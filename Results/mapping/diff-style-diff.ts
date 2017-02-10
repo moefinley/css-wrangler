@@ -1,5 +1,6 @@
 import {DiffGenericDiff} from "./diff-generic-diff";
-export class DiffElementDiff extends DiffGenericDiff {
+import {viewModel} from "../ViewModel";
+export class DiffStyleDiff extends DiffGenericDiff {
     public path: string;
     public friendlyPath: string;
     public lhs: string;
@@ -7,16 +8,20 @@ export class DiffElementDiff extends DiffGenericDiff {
     public kind: string;
     public xpath: string;
     public styleProperty: string;
+    public isVisible: KnockoutComputed<boolean>;
 
-    constructor(public deepDiffObj: deepDiff.IDiff) {
+    constructor(public deepDiffObj: deepDiff.IDiff){
         super(deepDiffObj);
-
         this.parseElementPath(deepDiffObj.path);
         if(this.xpath !== null){
             this.friendlyPath = `${this.xpath}, ${this.styleProperty}`;
         } else {
             this.friendlyPath = this.styleProperty;
         }
+        this.isVisible = ko.computed(():boolean=>{
+            let index = viewModel.data.filters().findIndex(e => e.property == this.styleProperty);
+            return index > -1 ? viewModel.data.filters()[index].isSelected() : true;
+        });
     }
 
     private parseElementPath(rawPath:string[]){

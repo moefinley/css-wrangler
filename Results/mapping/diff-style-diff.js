@@ -1,6 +1,6 @@
-define(["require", "exports", "./diff-generic-diff"], function (require, exports, diff_generic_diff_1) {
+define(["require", "exports", "./diff-generic-diff", "../ViewModel"], function (require, exports, diff_generic_diff_1, ViewModel_1) {
     "use strict";
-    class DiffElementDiff extends diff_generic_diff_1.DiffGenericDiff {
+    class DiffStyleDiff extends diff_generic_diff_1.DiffGenericDiff {
         constructor(deepDiffObj) {
             super(deepDiffObj);
             this.deepDiffObj = deepDiffObj;
@@ -11,6 +11,10 @@ define(["require", "exports", "./diff-generic-diff"], function (require, exports
             else {
                 this.friendlyPath = this.styleProperty;
             }
+            this.isVisible = ko.computed(() => {
+                let index = ViewModel_1.viewModel.data.filters().findIndex(e => e.property == this.styleProperty);
+                return index > -1 ? ViewModel_1.viewModel.data.filters()[index].isSelected() : true;
+            });
         }
         parseElementPath(rawPath) {
             let pathLength = rawPath.length;
@@ -20,6 +24,6 @@ define(["require", "exports", "./diff-generic-diff"], function (require, exports
             this.xpath = this.xpath != null ? this.xpath.substring(7, this.xpath.length) : null;
         }
     }
-    exports.DiffElementDiff = DiffElementDiff;
+    exports.DiffStyleDiff = DiffStyleDiff;
 });
-//# sourceMappingURL=diff-element-diff.js.map
+//# sourceMappingURL=diff-style-diff.js.map

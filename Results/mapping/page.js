@@ -8,7 +8,7 @@ define(["require", "exports", "../Mapping"], function (require, exports, Mapping
                 let count = 0;
                 for (let diffElement of this.elementsToTest) {
                     if (!!diffElement.styleDiffs) {
-                        count += diffElement.styleDiffs.length;
+                        count += diffElement.styleDiffsCount();
                     }
                 }
                 return count;

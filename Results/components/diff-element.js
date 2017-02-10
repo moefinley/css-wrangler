@@ -42,7 +42,7 @@ define(["require", "exports"], function (require, exports) {
             </thead>
             <tbody>
             <!-- ko foreach: styleDiffs -->
-            <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}"></tr>
+            <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}, visible: isVisible"></tr>
             <!-- /ko -->
             </tbody>
     </table>

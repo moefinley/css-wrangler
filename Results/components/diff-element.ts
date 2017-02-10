@@ -1,3 +1,4 @@
+import {DiffStyleDiff} from "../mapping/diff-style-diff";
 /**
  * Created by neilt on 23/01/2017.
  */
@@ -39,7 +40,7 @@ export let template = `
             </thead>
             <tbody>
             <!-- ko foreach: styleDiffs -->
-            <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}"></tr>
+            <tr class="results-row" data-bind="component: {name: 'diff-element-diff', params: $data}, visible: isVisible"></tr>
             <!-- /ko -->
             </tbody>
     </table>
