@@ -22,7 +22,7 @@ export let viewModel = {
             self.isExpanded = false;
         }
         if(!self.hasOwnProperty('id')) {
-            self.id = 'collapse' + Math.round(Math.random() * 100);
+            self.id = 'collapse' + Math.round(Math.random() * 10000);
         }
         componentInfo.templateNodes = componentInfo.templateNodes.filter(e => e.nodeType !== 3);
         self.panelHeadingNode = componentInfo.templateNodes.splice(componentInfo.templateNodes.findIndex(e => e.classList.contains('panel-heading')), 1);
