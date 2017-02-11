@@ -1,5 +1,4 @@
 /* External config file interfaces */
-import escapeStringRegexp = require("escape-string-regexp");
 interface IPageExtConfig {
     id: string;
     name: string;
@@ -69,10 +68,41 @@ import * as path from 'path';
 let noptConfigKnownOpts = { "config" : path };
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
-/*
- * Todo:
- * Check all values have been provided
- * Check all page IDs are unique and correct syntax
- */
+
+let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
+    let checkString = function(stringToCheck:string):boolean{
+        return typeof stringToCheck === "string" && stringToCheck.length > 0;
+    };
+    let checkArray = function(arrayToCheck:any[]){
+        return typeof arrayToCheck !== "undefined" && Array.isArray(arrayToCheck) && arrayToCheck.length > 0;
+    };
+    let pageIds = [];
+
+
+    if(!checkString(rawConfig.beforeUrl)) return false;
+    if(!checkString(rawConfig.afterUrl)) return false;
+    if(!checkString(rawConfig.outputPath)) return false;
+
+    if(checkArray(rawConfig.pages)){
+        let returnVal = true;
+        rawConfig.pages.forEach((page)=>{
+            if(!checkString(page.id)) returnVal = false;
+            if(!checkString(page.name)) returnVal = false;
+            if(!checkString(page.path)) returnVal = false;
+            if(checkArray(page.elementsToTest)){
+                page.elementsToTest.forEach(e => {if(typeof e !== "string") returnVal = false});
+            }
+            if(pageIds.indexOf(page.id) > -1) returnVal = false;
+            pageIds.push(page.id);
+        });
+        if (!returnVal) return false;
+    }
+
+    return true;
+};
+
 let rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
+if(!validateRawConfig(rawConfig)) {
+    throw "invalid config";
+}
 export const crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);

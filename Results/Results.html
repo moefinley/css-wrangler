@@ -54,7 +54,7 @@
                     <dt>Date</dt>
                     <dd data-bind="text: convertedDate"></dd>
                 </dl>
-                <div data-bind="foreach: filters">
+                <div class="well" data-bind="foreach: filters">
                     <label class="checkbox-inline">
                         <input type="checkbox" data-bind="checked: isSelected">
                         <span data-bind="text: name"></span>
@@ -108,6 +108,6 @@
     </div>
 </div>
 
-<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
+<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
 </body>
 </html>

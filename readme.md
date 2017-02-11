@@ -48,7 +48,6 @@ Potentially there are more style changes within these elements but without somet
 ## Roadmap 
  
 ### Short term
- - Get the ConfigParser.ts to validate the config file
  - Break down ComputedStyleTest.ts into separate concerns
  - Create shorter XPaths by looking for a parent ID
  - Add elements to ignore to crawler configuration
