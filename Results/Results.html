@@ -64,28 +64,21 @@
             <article>
                 <h2>Pages:</h2>
                 <div data-bind="foreach:data.pages">
-                    <div class="panel panel-default">
-                        <div class="panel-heading" role="tab" id="headingOne">
-                            <h4 class="panel-title">
-                                <span class="glyphicon glyphicon-file"></span>
-                                <a data-bind="attr: {href:('#'+id())}" role="button" data-toggle="collapse"
-                                   aria-expanded="false" aria-controls="collapseExample">
-                                    <span data-bind="text:name"></span>
-                                    <span class="pull-right">
-                                        Elements: <span class="label label-as-badge label-default"
-                                                        data-bind="text: elementsWithElementChangesCount, css: {'label-warning': elementsWithElementChangesCount() > 0, 'label-success': elementsWithElementChangesCount() < 1}"></span>
-                                        Styles: <span class="label label-as-badge"
-                                                      data-bind="text: elementsWithStyleChangesCount, css: {'label-danger': elementsWithStyleChangesCount() > 0, 'label-success': elementsWithStyleChangesCount() < 1}"></span>
-                                    </span>
-                                </a>
-                            </h4>
+                    <bs-collapsible-panel params="page:$data">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-file"></span>
+                            <span data-bind="text:page.name"></span>
+                            <span class="pull-right">
+                                Elements: <span class="label label-as-badge label-default"
+                                                data-bind="text: page.elementsWithElementChangesCount, css: {'label-warning': page.elementsWithElementChangesCount() > 0, 'label-success': page.elementsWithElementChangesCount() < 1}"></span>
+                                Styles: <span class="label label-as-badge"
+                                              data-bind="text: page.elementsWithStyleChangesCount, css: {'label-danger': page.elementsWithStyleChangesCount() > 0, 'label-success': page.elementsWithStyleChangesCount() < 1}"></span>
+                            </span>
                         </div>
-                        <div class="panel-collapse collapse" data-bind="attr: {id:id}">
-                            <div class="panel">
-                                <div class="well">
-                                    <!-- ko foreach: elementsToTest -->
-                                    <bs-collapsible-panel
-                                            params="diffElement:$data">
+                        <div class="well">
+                            <!-- ko foreach: page.elementsToTest -->
+                            <bs-collapsible-panel
+                                    params="diffElement:$data">
                                         <span class="panel-heading">
                                             <span data-bind="text: diffElement.selector"></span>
                                             <span class="pull-right">
@@ -95,13 +88,11 @@
                                                               data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
                                             </span>
                                         </span>
-                                        <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
-                                    </bs-collapsible-panel>
-                                    <!-- /ko -->
-                                </div>
-                            </div>
+                                <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
+                            </bs-collapsible-panel>
+                            <!-- /ko -->
                         </div>
-                    </div>
+                    </bs-collapsible-panel>
                 </div>
             </article>
         </section>
