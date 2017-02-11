@@ -49,7 +49,6 @@ Potentially there are more style changes within these elements but without somet
  
 ### Short term
  - Break down ComputedStyleTest.ts into separate concerns
- - Create shorter XPaths by looking for a parent ID
  - Add elements to ignore to crawler configuration
  - Capture Selenium errors and translate them to more user friendly errors
     + Selenium error 'element can't be found' should list the element selector and the current page

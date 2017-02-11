@@ -10,20 +10,25 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
         throw 'could not find element';
     }
     var Xpath:any = {};
-    Xpath.getElementXPath = function (element):string {
+    Xpath.getElementXPath = function(element) {
         if (element && element.id)
             return '//*[@id="' + element.id + '"]';
         else
             return Xpath.getElementTreeXPath(element);
     };
 
-    Xpath.getElementTreeXPath = function (element):string {
+    Xpath.getElementTreeXPath = function(element) {
         var paths = [];
 
         // Use nodeName (instead of localName) so namespace prefix is included (if any).
-        for (; element && element.nodeType == Node.ELEMENT_NODE; element = element.parentNode) {
+        for (; element && element.nodeType == 1; element = element.parentNode)  {
             var index = 0;
-            var hasFollowingSiblings = false;
+            // EXTRA TEST FOR ELEMENT.ID
+            if (element && element.id) {
+                paths.splice(0, 0, '/*[@id="' + element.id + '"]');
+                break;
+            }
+
             for (var sibling = element.previousSibling; sibling; sibling = sibling.previousSibling) {
                 // Ignore document type declaration.
                 if (sibling.nodeType == Node.DOCUMENT_TYPE_NODE)
@@ -33,14 +38,8 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
                     ++index;
             }
 
-            for (var sibling = element.nextSibling; sibling && !hasFollowingSiblings;
-                 sibling = sibling.nextSibling) {
-                if (sibling.nodeName == element.nodeName)
-                    hasFollowingSiblings = true;
-            }
-
-            var tagName = (element.prefix ? element.prefix + ":" : "") + element.localName;
-            var pathIndex = (index || hasFollowingSiblings ? "[" + (index + 1) + "]" : "");
+            var tagName = element.nodeName.toLowerCase();
+            var pathIndex = (index ? "[" + (index+1) + "]" : "");
             paths.splice(0, 0, tagName + pathIndex);
         }
 
