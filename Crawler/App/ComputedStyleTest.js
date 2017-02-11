@@ -5,6 +5,7 @@ const deepDiff = require("deep-diff");
 const webdriver = require("selenium-webdriver");
 const CleanDiffElement_1 = require("./CleanDiffElement");
 const ScrapeComputedStyles_1 = require("./BrowserScript/ScrapeComputedStyles");
+const Logging_1 = require("./Logging/Logging");
 const differ = deepDiff.diff;
 let driver = new webdriver.Builder()
     .forBrowser('chrome')
@@ -20,13 +21,14 @@ function init() {
         for (let diffElement of page.elementsToTest) {
             promiseArray.push(driver.executeScript(ScrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector)
                 .then((computedStyles) => {
-                console.log(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
+                Logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
                 if (isOriginal) {
                     diffElement.original = computedStyles;
                 }
                 else {
                     diffElement.comparand = computedStyles;
                 }
+                return computedStyles;
             }));
         }
         return Promise.all(promiseArray);
@@ -39,7 +41,7 @@ function init() {
         beforeAndAfterPromises.push(getAllElementsComputedStyles(page, beforePageUrl, true));
         beforeAndAfterPromises.push(getAllElementsComputedStyles(page, afterPageUrl, false));
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            console.log('Diff obj length: ' + allResultsArray.length);
+            Logging_1.logInfo('Diff obj length: ' + allResultsArray.length);
             for (let index in page.elementsToTest) {
                 let diffElement = page.elementsToTest[index];
                 diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -49,7 +51,7 @@ function init() {
                 return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
             });
             if (index == (ConfigParser_1.crawlerConfig.pages.length - 1).toString()) {
-                console.log('last page complete');
+                Logging_1.logInfo('last page complete');
                 writeToDisk(createOutputJsonForAllPages());
                 unloadSelenium();
             }

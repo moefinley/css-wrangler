@@ -1,29 +1,13 @@
 "use strict";
-class Page {
-    constructor(id, name, url, elementsToTest) {
-        this.id = id;
-        this.name = name;
-        this.url = url;
-        this.elementsToTest = [];
-        elementsToTest.forEach(e => this.elementsToTest.push(new DiffElement(e)));
-    }
-}
-class DiffElement {
-    constructor(selector) {
-        this.selector = selector;
-        this.original = {};
-        this.comparand = {};
-        this.diff = [];
-    }
-    ;
-}
+/* External config file interfaces */
+const Page_1 = require("./Page");
 class CrawlerConfig {
     constructor(configFile, rawConfig) {
         this.configFile = configFile;
         this.pages = [];
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest)));
+        rawConfig.pages.forEach(e => this.pages.push(new Page_1.Page(e.id, e.name, e.path, e.elementsToTest)));
         this.outputPath = rawConfig.outputPath;
     }
 }

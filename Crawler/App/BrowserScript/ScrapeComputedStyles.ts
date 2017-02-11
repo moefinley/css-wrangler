@@ -2,15 +2,15 @@
  * This JavaScript get executed in the browser under test and not Node
  * Therefore it should remain as cross compatible as possible
  */
-export var scrapeComputedStyles = function (parentElementQuerySelector) {
+export var scrapeComputedStyles = function (parentElementQuerySelector:string): IComputedStyles {
     /* This is run in the browser and therefore must stay cross compatible */
-    var returnObj = {};
+    var returnObj = <IComputedStyles>{};
     var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
     if(parentElement === null){
         throw 'could not find element';
     }
     var Xpath:any = {};
-    Xpath.getElementXPath = function(element) {
+    Xpath.getElementXPath = function(element:Element) {
         if (element && element.id)
             return '//*[@id="' + element.id + '"]';
         else
@@ -46,7 +46,7 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
         return paths.length ? "/" + paths.join("/") : null;
     };
 
-    function iterateThroughStyleProperties(theElement) {
+    function iterateThroughStyleProperties(theElement:Element):cssStyleProperties {
         var returnObj = {};
         var styleDeclaration = window.getComputedStyle(theElement, null);
         for (var j = 0; j < styleDeclaration.length; j++) {
@@ -56,12 +56,13 @@ export var scrapeComputedStyles = function (parentElementQuerySelector) {
         return returnObj;
     }
 
-    function iterateThroughChildren(thisElement, thisObject) {
+    function iterateThroughChildren(thisElement:Element, thisObject:IComputedStyles) {
         thisObject.styleProperties = iterateThroughStyleProperties(thisElement);
 
         var thisElementsChildren = thisElement.children;
-        thisObject.children = {};
+        thisObject.children = <IComputedStyles>{};
         for (var i = 0; i < thisElementsChildren.length; i++) {
+            //TODO: Check if child element should be ignored
             var childElement = thisElementsChildren[i];
             var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
             thisObject.children[xpathOfChild] = {};

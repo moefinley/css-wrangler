@@ -1,4 +1,5 @@
 /* External config file interfaces */
+import {Page} from "./Page";
 interface IPageExtConfig {
     id: string;
     name: string;
@@ -19,34 +20,6 @@ interface ICrawlerInternalConfig {
     afterUrl: string;
     pages: Page[];
     outputPath: string //TODO make this a path passed in as an argument
-}
-
-interface IDiffElement {
-    selector: string;
-    original: any;
-    comparand: any;
-    diff:deepDiff.IDiff[];
-}
-
-class Page {
-    public elementsToTest:DiffElement[] = [];
-    constructor (
-        public id:string,
-        public name: string,
-        public url:string,
-        elementsToTest:string[]
-    ){
-        elementsToTest.forEach(e => this.elementsToTest.push(new DiffElement(e)));
-    }
-}
-
-class DiffElement implements IDiffElement{
-    public original: any = {};
-    public comparand: any = {};
-    public diff:deepDiff.IDiff[] = [];
-    constructor (public selector: string) {
-
-    };
 }
 
 class CrawlerConfig implements ICrawlerInternalConfig {

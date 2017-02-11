@@ -54,6 +54,7 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector) {
         var thisElementsChildren = thisElement.children;
         thisObject.children = {};
         for (var i = 0; i < thisElementsChildren.length; i++) {
+            //TODO: Check if child element should be ignored
             var childElement = thisElementsChildren[i];
             var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
             thisObject.children[xpathOfChild] = {};

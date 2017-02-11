@@ -6,6 +6,8 @@ import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
 import {scrapeComputedStyles} from "./BrowserScript/ScrapeComputedStyles";
+import {logInfo} from "./Logging/Logging";
+import promise = webdriver.promise;
 const differ = deepDiff.diff;
 
 let driver = new webdriver.Builder()
@@ -17,19 +19,20 @@ function unloadSelenium() {
     driver.close();
 }
 export function init() {
-    function getAllElementsComputedStyles(page, url, isOriginal) {
-        let promiseArray = [];
+    function getAllElementsComputedStyles(page:IPage, url:string, isOriginal:boolean):Promise<Promise<any[]>> {
+        let promiseArray:promise.Promise<IComputedStyles>[] = [];
 
         driver.get(url);
         for (let diffElement of page.elementsToTest) {
-            promiseArray.push(driver.executeScript(scrapeComputedStyles, diffElement.selector)
-                .then((computedStyles) => {
-                    console.log(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
+            promiseArray.push(driver.executeScript<IComputedStyles>(scrapeComputedStyles, diffElement.selector)
+                .then((computedStyles):IComputedStyles => {
+                    logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
                     if (isOriginal) {
                         diffElement.original = computedStyles;
                     } else {
                         diffElement.comparand = computedStyles;
                     }
+                    return computedStyles;
                 }));
         }
         return Promise.all(promiseArray);
@@ -44,7 +47,7 @@ export function init() {
         beforeAndAfterPromises.push(getAllElementsComputedStyles(page, afterPageUrl, false));
 
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            console.log('Diff obj length: ' + allResultsArray.length);
+            logInfo('Diff obj length: ' + allResultsArray.length);
 
             for (let index in page.elementsToTest) {
                 let diffElement = page.elementsToTest[index];
@@ -57,7 +60,7 @@ export function init() {
             });
 
             if (index == (crawlerConfig.pages.length - 1).toString()) {
-                console.log('last page complete');
+                logInfo('last page complete');
                 writeToDisk(createOutputJsonForAllPages());
                 unloadSelenium();
             }
