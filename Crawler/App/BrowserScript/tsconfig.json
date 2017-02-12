@@ -1,10 +1,8 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es3",
-    "sourceMap": true
+    "module": "AMD",
+    "target": "es3"
   },
-  "exclude": [
-    "node_modules"
-  ]
+  "include": ["../Interfaces/IComputedStyles.ts"]
 }
