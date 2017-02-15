@@ -56,7 +56,8 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToI
         var returnVal = false;
         for (var i = 0; i < elementsToIgnore.length; i++) {
             var elementToIgnoreSelector = elementsToIgnore[i];
-            if (childElement = document.querySelector(elementToIgnoreSelector)) {
+            console.log('element to ignore selector: ' + elementToIgnoreSelector);
+            if (childElement === document.querySelector(elementToIgnoreSelector)) {
                 returnVal = true;
                 break;
             }
@@ -69,11 +70,12 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToI
         thisObject.children = {};
         for (var i = 0; i < thisElementsChildren.length; i++) {
             var childElement = thisElementsChildren[i];
+            var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
             if (shouldElementBeIgnored(childElement)) {
+                console.log('Ignored element: ' + xpathOfChild);
                 scrapedObj.ignoreCount++;
                 continue;
             }
-            var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
             thisObject.children[xpathOfChild] = {};
             iterateThroughChildren(childElement, thisObject.children[xpathOfChild]);
         }
