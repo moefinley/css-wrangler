@@ -7,7 +7,7 @@ class CrawlerConfig {
         this.pages = [];
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        rawConfig.pages.forEach(e => this.pages.push(new Page_1.Page(e.id, e.name, e.path, e.elementsToTest)));
+        rawConfig.pages.forEach(e => this.pages.push(new Page_1.Page(e.id, e.name, e.path, e.elementsToTest, e.elementsToIgnore)));
         this.outputPath = rawConfig.outputPath;
     }
 }

@@ -6,12 +6,18 @@ const webdriver = require("selenium-webdriver");
 const CleanDiffElement_1 = require("./CleanDiffElement");
 const ScrapeComputedStyles_1 = require("./BrowserScript/ScrapeComputedStyles");
 const Logging_1 = require("./Logging/Logging");
+var logging = webdriver.logging;
 const differ = deepDiff.diff;
+let capabilities = webdriver.Capabilities.chrome();
+let loggingPreferences = new logging.Preferences();
+loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
+capabilities.setLoggingPrefs(loggingPreferences);
 let driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .withCapabilities(webdriver.Capabilities.chrome())
+    .withCapabilities(capabilities)
     .build();
 function unloadSelenium() {
+    driver.manage().logs().get("browser").then(entry => entry.forEach(log => Logging_1.logInfo(log.message)));
     driver.close();
 }
 function init() {
@@ -19,16 +25,17 @@ function init() {
         let promiseArray = [];
         driver.get(url);
         for (let diffElement of page.elementsToTest) {
-            promiseArray.push(driver.executeScript(ScrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector)
-                .then((computedStyles) => {
-                Logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
+            promiseArray.push(driver.executeScript(ScrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, page.elementsToIgnore)
+                .then((resultsOfScraping) => {
+                Logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
                 if (isOriginal) {
-                    diffElement.original = computedStyles;
+                    diffElement.original = resultsOfScraping.computedStyles;
                 }
                 else {
-                    diffElement.comparand = computedStyles;
+                    diffElement.comparand = resultsOfScraping.computedStyles;
                 }
-                return computedStyles;
+                Logging_1.logInfo("Total ignored: " + resultsOfScraping.ignoreCount);
+                return resultsOfScraping.computedStyles;
             }));
         }
         return Promise.all(promiseArray);

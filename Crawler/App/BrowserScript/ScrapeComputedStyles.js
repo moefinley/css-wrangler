@@ -3,9 +3,12 @@
  * This JavaScript get executed in the browser under test and not Node
  * Therefore it should remain as cross compatible as possible
  */
-exports.scrapeComputedStyles = function (parentElementQuerySelector) {
+exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToIgnore) {
     /* This is run in the browser and therefore must stay cross compatible */
-    var returnObj = {};
+    var scrapedObj = {
+        computedStyles: {},
+        ignoreCount: 0
+    };
     var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
     if (parentElement === null) {
         throw 'could not find element';
@@ -49,19 +52,33 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector) {
         }
         return returnObj;
     }
+    function shouldElementBeIgnored(childElement) {
+        var returnVal = false;
+        for (var i = 0; i < elementsToIgnore.length; i++) {
+            var elementToIgnoreSelector = elementsToIgnore[i];
+            if (childElement = document.querySelector(elementToIgnoreSelector)) {
+                returnVal = true;
+                break;
+            }
+        }
+        return returnVal;
+    }
     function iterateThroughChildren(thisElement, thisObject) {
         thisObject.styleProperties = iterateThroughStyleProperties(thisElement);
         var thisElementsChildren = thisElement.children;
         thisObject.children = {};
         for (var i = 0; i < thisElementsChildren.length; i++) {
-            //TODO: Check if child element should be ignored
             var childElement = thisElementsChildren[i];
+            if (shouldElementBeIgnored(childElement)) {
+                scrapedObj.ignoreCount++;
+                continue;
+            }
             var xpathOfChild = 'xpath-' + Xpath.getElementXPath(childElement);
             thisObject.children[xpathOfChild] = {};
             iterateThroughChildren(childElement, thisObject.children[xpathOfChild]);
         }
     }
-    iterateThroughChildren(parentElement, returnObj);
-    return returnObj;
+    iterateThroughChildren(parentElement, scrapedObj.computedStyles);
+    return scrapedObj;
 };
 //# sourceMappingURL=ScrapeComputedStyles.js.map

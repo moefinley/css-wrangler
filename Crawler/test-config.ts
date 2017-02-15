@@ -7,7 +7,8 @@ export const crawlerConfig = {
             id: 'home',
             name: 'Home page',
             path: '/home.html',
-            elementsToTest: sharedElementsToTest
+            elementsToTest: sharedElementsToTest,
+            elementsToIgnore: ['.ignore-me']
         },
         {
             id: 'about',

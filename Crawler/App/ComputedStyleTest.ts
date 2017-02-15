@@ -8,14 +8,21 @@ import {cleanDiffElement} from "./CleanDiffElement";
 import {scrapeComputedStyles} from "./BrowserScript/ScrapeComputedStyles";
 import {logInfo} from "./Logging/Logging";
 import promise = webdriver.promise;
+import logging = webdriver.logging;
 const differ = deepDiff.diff;
 
+
+let capabilities = webdriver.Capabilities.chrome();
+let loggingPreferences = new logging.Preferences();
+loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
+capabilities.setLoggingPrefs(loggingPreferences);
 let driver = new webdriver.Builder()
     .forBrowser('chrome')
-    .withCapabilities(webdriver.Capabilities.chrome())
+    .withCapabilities(capabilities)
     .build();
 
 function unloadSelenium() {
+    driver.manage().logs().get("browser").then(entry => entry.forEach(log => logInfo(log.message)));
     driver.close();
 }
 export function init() {
@@ -24,15 +31,16 @@ export function init() {
 
         driver.get(url);
         for (let diffElement of page.elementsToTest) {
-            promiseArray.push(driver.executeScript<IComputedStyles>(scrapeComputedStyles, diffElement.selector)
-                .then((computedStyles):IComputedStyles => {
-                    logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(computedStyles).length}`);
+            promiseArray.push(driver.executeScript<IScrapedObj>(scrapeComputedStyles, diffElement.selector, page.elementsToIgnore)
+                .then((resultsOfScraping):IComputedStyles => {
+                    logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
                     if (isOriginal) {
-                        diffElement.original = computedStyles;
+                        diffElement.original = resultsOfScraping.computedStyles;
                     } else {
-                        diffElement.comparand = computedStyles;
+                        diffElement.comparand = resultsOfScraping.computedStyles;
                     }
-                    return computedStyles;
+                    logInfo("Total ignored: " + resultsOfScraping.ignoreCount);
+                    return resultsOfScraping.computedStyles;
                 }));
         }
         return Promise.all(promiseArray);
@@ -70,7 +78,7 @@ export function init() {
     }
 };
 
-let createOutputJsonForAllPages = function () {
+let createOutputJsonForAllPages = function ():string {
     let output = {
         configFile: crawlerConfig.configFile,
         date: Date.now(),

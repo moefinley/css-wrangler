@@ -4,5 +4,8 @@
     "module": "AMD",
     "target": "es3"
   },
-  "include": ["../Interfaces/IComputedStyles.ts"]
+  "include": [
+    "../Interfaces/IComputedStyles.ts",
+    "../Interfaces/IReturnObj.ts"
+  ]
 }

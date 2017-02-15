@@ -3,4 +3,5 @@ interface IPage {
     name: string;
     url:string;
     elementsToTest:IDiffElement[];
+    elementsToIgnore:string[];
 }

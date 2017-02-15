@@ -5,6 +5,7 @@ interface IPageExtConfig {
     name: string;
     path: string;
     elementsToTest: string[];
+    elementsToIgnore?: string[];
 }
 
 interface ICrawlerExtConfig {
@@ -30,7 +31,7 @@ class CrawlerConfig implements ICrawlerInternalConfig {
     constructor(public configFile: string, rawConfig:ICrawlerExtConfig){
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest)));
+        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest, e.elementsToIgnore)));
         this.outputPath = rawConfig.outputPath;
     }
 }
