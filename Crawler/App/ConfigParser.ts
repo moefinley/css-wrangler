@@ -21,12 +21,14 @@ interface ICrawlerExtConfig {
 
 /* Internal config object interfaces */
 interface ICrawlerInternalConfig {
+    getOriginal: boolean;
+    configFile: string;
+    diffOutputPath: ParsedPath;
+    originalOutputPath: ParsedPath;
+    comparandOutputPath: ParsedPath;
     beforeUrl: string;
     afterUrl: string;
     pages: Page[];
-    diffOutputPath: ParsedPath; //TODO make this a path passed in as an argument
-    originalOutputPath: ParsedPath;
-    comparandOutputPath: ParsedPath;
 }
 
 class CrawlerConfig implements ICrawlerInternalConfig {
@@ -36,7 +38,11 @@ class CrawlerConfig implements ICrawlerInternalConfig {
     beforeUrl: string;
     afterUrl: string;
     pages: Page[] = [];
-    constructor(public configFile: string, rawConfig:ICrawlerExtConfig){
+    constructor(
+        public configFile: string,
+        public getOriginal: boolean,
+        rawConfig:ICrawlerExtConfig
+    ){
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
         rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest, e.elementsToIgnore)));
@@ -78,7 +84,10 @@ let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
     return true;
 };
 
-let noptConfigKnownOpts = { "config" : path };
+let noptConfigKnownOpts = {
+    "config" : path,
+    "getOriginal" : Boolean
+};
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
 let rawConfig;
@@ -91,4 +100,4 @@ try {
 if(!validateRawConfig(rawConfig)) {
     throw "invalid config";
 }
-export const crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
+export const crawlerConfig = new CrawlerConfig(parsed.config, parsed.getOriginal, rawConfig);

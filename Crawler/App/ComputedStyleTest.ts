@@ -59,16 +59,19 @@ export function init() {
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
+
         beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
-        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
+        if(!crawlerConfig.getOriginal) beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
 
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
             logInfo(`Diff obj length: ${allResultsArray.length}`);
 
-            for (let index in page.elementsToTest) {
-                let diffElement = page.elementsToTest[index];
-                diffElement.diff = differ(diffElement.original, diffElement.comparand);
-                cleanDiffElement(diffElement);
+            if(!crawlerConfig.getOriginal) {
+                for (let index in page.elementsToTest) {
+                    let diffElement = page.elementsToTest[index];
+                    diffElement.diff = differ(diffElement.original, diffElement.comparand);
+                    cleanDiffElement(diffElement);
+                }
             }
 
             page.elementsToTest = page.elementsToTest.filter((diffElement) => {
@@ -77,9 +80,9 @@ export function init() {
 
             if (index == (crawlerConfig.pages.length - 1).toString()) {
                 logInfo('last page complete');
-                writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
+                if(!crawlerConfig.getOriginal) writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
                 writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
-                writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
+                if(!crawlerConfig.getOriginal) writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
                 unloadSelenium();
             }
         }, (err) => {

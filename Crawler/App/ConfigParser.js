@@ -3,8 +3,9 @@ const nopt = require('nopt');
 const path = require('path');
 const Page_1 = require("./Page");
 class CrawlerConfig {
-    constructor(configFile, rawConfig) {
+    constructor(configFile, getOriginal, rawConfig) {
         this.configFile = configFile;
+        this.getOriginal = getOriginal;
         this.pages = [];
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
@@ -50,7 +51,10 @@ let validateRawConfig = function (rawConfig) {
     }
     return true;
 };
-let noptConfigKnownOpts = { "config": path };
+let noptConfigKnownOpts = {
+    "config": path,
+    "getOriginal": Boolean
+};
 let parsed = nopt(noptConfigKnownOpts, {}, process.argv, 2);
 let rawConfig;
 try {
@@ -62,5 +66,5 @@ catch (e) {
 if (!validateRawConfig(rawConfig)) {
     throw "invalid config";
 }
-exports.crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
+exports.crawlerConfig = new CrawlerConfig(parsed.config, parsed.getOriginal, rawConfig);
 //# sourceMappingURL=ConfigParser.js.map
