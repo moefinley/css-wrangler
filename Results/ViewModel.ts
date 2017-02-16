@@ -19,6 +19,7 @@ class ViewModel {
          * Knockout doesn't like updating arrays while mapping
          * So this...
          */
+        console.log('run once?');
         this.filters(this.filters().concat(this.pendingFilters));
     })};
     public data = {
@@ -28,13 +29,12 @@ class ViewModel {
         date: ko.observable<string>('loading...'),
         pages: ko.observableArray<IPage>([])
     };
-    public filters = ko.observableArray<Filter>([
-        new Filter('background-image')]);
+    public filters = ko.observableArray<Filter>();
 
     public pendingFilters = [];
 
     public addFilter(propertyName:string) {
-        if(this.filters().findIndex(filter => filter.property === propertyName) === -1){
+        if(this.pendingFilters.findIndex(filter => filter.property === propertyName) === -1){
             this.pendingFilters.push(new Filter(propertyName));
         }
     };

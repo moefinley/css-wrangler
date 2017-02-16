@@ -48,6 +48,7 @@ Potentially there are more style changes within these elements but without somet
 ## Roadmap 
  
 ### Short term
+ - Show the number of ignored elements on results page
  - Break down ComputedStyleTest.ts into separate concerns
  - Add elements to ignore to crawler configuration
  - Capture Selenium errors and translate them to more user friendly errors

@@ -16,6 +16,7 @@ define(["require", "exports", "./Mapping", "./FileOperations", "./Filter"], func
                      * Knockout doesn't like updating arrays while mapping
                      * So this...
                      */
+                    console.log('run once?');
                     this.filters(this.filters().concat(this.pendingFilters));
                 });
             };
@@ -26,8 +27,7 @@ define(["require", "exports", "./Mapping", "./FileOperations", "./Filter"], func
                 date: ko.observable('loading...'),
                 pages: ko.observableArray([])
             };
-            this.filters = ko.observableArray([
-                new Filter_1.Filter('background-image')]);
+            this.filters = ko.observableArray();
             this.pendingFilters = [];
             this.convertedDate = ko.pureComputed(() => {
                 if (this.data.date() != 'loading...') {
@@ -39,7 +39,7 @@ define(["require", "exports", "./Mapping", "./FileOperations", "./Filter"], func
             });
         }
         addFilter(propertyName) {
-            if (this.filters().findIndex(filter => filter.property === propertyName) === -1) {
+            if (this.pendingFilters.findIndex(filter => filter.property === propertyName) === -1) {
                 this.pendingFilters.push(new Filter_1.Filter(propertyName));
             }
         }
