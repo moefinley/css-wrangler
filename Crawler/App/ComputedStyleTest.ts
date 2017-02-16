@@ -9,6 +9,7 @@ import {scrapeComputedStyles} from "./BrowserScript/ScrapeComputedStyles";
 import {logInfo} from "./Logging/Logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
+import diff = require("deep-diff");
 const differ = deepDiff.diff;
 
 
@@ -25,37 +26,44 @@ function unloadSelenium() {
     driver.manage().logs().get("browser").then(entry => entry.forEach(log => logInfo(log.message)));
     driver.close();
 }
-export function init() {
-    function getAllElementsComputedStyles(page:IPage, url:string, isOriginal:boolean):Promise<Promise<any[]>> {
-        let promiseArray:promise.Promise<IComputedStyles>[] = [];
 
-        driver.get(url);
-        for (let diffElement of page.elementsToTest) {
-            promiseArray.push(driver.executeScript<IScrapedObj>(scrapeComputedStyles, diffElement.selector, page.elementsToIgnore)
-                .then((resultsOfScraping):IComputedStyles => {
-                    logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-                    if (isOriginal) {
-                        diffElement.original = resultsOfScraping.computedStyles;
-                    } else {
-                        diffElement.comparand = resultsOfScraping.computedStyles;
-                    }
-                    logInfo("Total ignored: " + resultsOfScraping.ignoreCount);
-                    return resultsOfScraping.computedStyles;
-                }));
-        }
-        return Promise.all(promiseArray);
+function getComputedStylesForPage(
+    pageName:string,
+    url:string,
+    isOriginal:boolean,
+    elementsToScrape: IDiffElement[],
+    elementsToIgnore:string[]
+):Promise<Promise<IScrapedObj[]>> {
+    let promiseArray:promise.Promise<IScrapedObj>[] = [];
+
+    driver.get(url);
+    for (let diffElement of elementsToScrape) {
+        promiseArray.push(driver.executeScript<IScrapedObj>(scrapeComputedStyles, diffElement.selector, elementsToIgnore)
+            .then((resultsOfScraping):IScrapedObj => {
+                logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
+                logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+                if (isOriginal) {
+                    diffElement.original = resultsOfScraping.computedStyles;
+                } else {
+                    diffElement.comparand = resultsOfScraping.computedStyles;
+                }
+                return resultsOfScraping;
+            }));
     }
+    return Promise.all(promiseArray);
+}
 
+export function init() {
     for (let index in crawlerConfig.pages) {
         let page = crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = "http://" + crawlerConfig.beforeUrl + page.url;
-        let afterPageUrl = "http://" + crawlerConfig.afterUrl + page.url;
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, beforePageUrl, true));
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, afterPageUrl, false));
+        let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
+        let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
+        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
 
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            logInfo('Diff obj length: ' + allResultsArray.length);
+            logInfo(`Diff obj length: ${allResultsArray.length}`);
 
             for (let index in page.elementsToTest) {
                 let diffElement = page.elementsToTest[index];
@@ -69,7 +77,9 @@ export function init() {
 
             if (index == (crawlerConfig.pages.length - 1).toString()) {
                 logInfo('last page complete');
-                writeToDisk(createOutputJsonForAllPages());
+                writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
+                writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
+                writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
                 unloadSelenium();
             }
         }, (err) => {
@@ -78,21 +88,54 @@ export function init() {
     }
 };
 
-let createOutputJsonForAllPages = function ():string {
-    let output = {
+let createJson = function(mapper:(IDiffElement)=>any):string {
+    return JSON.stringify({
         configFile: crawlerConfig.configFile,
         date: Date.now(),
         original: crawlerConfig.beforeUrl,
         comparator: crawlerConfig.afterUrl,
-        pages: crawlerConfig.pages
-    };
-    return JSON.stringify(output);
+        pages: crawlerConfig.pages.map((page, index, array)=>{
+            return {
+                id:page.id,
+                name: page.name,
+                url:page.url,
+                elementsToTest: page.elementsToTest.map(mapper)
+            }
+        })
+    });
 };
 
-let writeToDisk = function (contents) {
-    let outputPath = crawlerConfig.outputPath;
+let createDiffJson = function ():string {
+    return createJson(
+        (diffElement) => {
+            return {
+                selector: diffElement.selector,
+                diff: diffElement.diff
+            }
+        }
+    );
+};
 
-    fs.writeFile(outputPath, contents, function (err) {
+let createOriginalJson = function ():string {
+    return createJson((diffElement)=>{
+        return {
+            selector: diffElement.selector,
+            original: diffElement.original
+        }
+    })
+};
+
+let createComparandJson = function ():string {
+    return createJson((diffElement)=>{
+        return {
+            selector: diffElement.selector,
+            comparand: diffElement.comparand
+        }
+    })
+};
+
+let writeToDisk = function (contents, path) {
+    fs.writeFile(path, contents, function (err) {
         if (err)
             console.error(err);
         console.log('Written!');

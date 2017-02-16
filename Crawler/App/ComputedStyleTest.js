@@ -20,35 +20,35 @@ function unloadSelenium() {
     driver.manage().logs().get("browser").then(entry => entry.forEach(log => Logging_1.logInfo(log.message)));
     driver.close();
 }
-function init() {
-    function getAllElementsComputedStyles(page, url, isOriginal) {
-        let promiseArray = [];
-        driver.get(url);
-        for (let diffElement of page.elementsToTest) {
-            promiseArray.push(driver.executeScript(ScrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, page.elementsToIgnore)
-                .then((resultsOfScraping) => {
-                Logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${page.name} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-                if (isOriginal) {
-                    diffElement.original = resultsOfScraping.computedStyles;
-                }
-                else {
-                    diffElement.comparand = resultsOfScraping.computedStyles;
-                }
-                Logging_1.logInfo("Total ignored: " + resultsOfScraping.ignoreCount);
-                return resultsOfScraping.computedStyles;
-            }));
-        }
-        return Promise.all(promiseArray);
+function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, elementsToIgnore) {
+    let promiseArray = [];
+    driver.get(url);
+    for (let diffElement of elementsToScrape) {
+        promiseArray.push(driver.executeScript(ScrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
+            .then((resultsOfScraping) => {
+            Logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
+            Logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+            if (isOriginal) {
+                diffElement.original = resultsOfScraping.computedStyles;
+            }
+            else {
+                diffElement.comparand = resultsOfScraping.computedStyles;
+            }
+            return resultsOfScraping;
+        }));
     }
+    return Promise.all(promiseArray);
+}
+function init() {
     for (let index in ConfigParser_1.crawlerConfig.pages) {
         let page = ConfigParser_1.crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = "http://" + ConfigParser_1.crawlerConfig.beforeUrl + page.url;
-        let afterPageUrl = "http://" + ConfigParser_1.crawlerConfig.afterUrl + page.url;
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, beforePageUrl, true));
-        beforeAndAfterPromises.push(getAllElementsComputedStyles(page, afterPageUrl, false));
+        let beforePageUrl = `http://${ConfigParser_1.crawlerConfig.beforeUrl}${page.url}`;
+        let afterPageUrl = `http://${ConfigParser_1.crawlerConfig.afterUrl}${page.url}`;
+        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
         Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            Logging_1.logInfo('Diff obj length: ' + allResultsArray.length);
+            Logging_1.logInfo(`Diff obj length: ${allResultsArray.length}`);
             for (let index in page.elementsToTest) {
                 let diffElement = page.elementsToTest[index];
                 diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -59,7 +59,9 @@ function init() {
             });
             if (index == (ConfigParser_1.crawlerConfig.pages.length - 1).toString()) {
                 Logging_1.logInfo('last page complete');
-                writeToDisk(createOutputJsonForAllPages());
+                writeToDisk(createDiffJson(), ConfigParser_1.crawlerConfig.diffOutputPath.dir + ConfigParser_1.crawlerConfig.diffOutputPath.base);
+                writeToDisk(createOriginalJson(), ConfigParser_1.crawlerConfig.originalOutputPath.dir + ConfigParser_1.crawlerConfig.originalOutputPath.base);
+                writeToDisk(createComparandJson(), ConfigParser_1.crawlerConfig.comparandOutputPath.dir + ConfigParser_1.crawlerConfig.comparandOutputPath.base);
                 unloadSelenium();
             }
         }, (err) => {
@@ -69,19 +71,48 @@ function init() {
 }
 exports.init = init;
 ;
-let createOutputJsonForAllPages = function () {
-    let output = {
+let createJson = function (mapper) {
+    return JSON.stringify({
         configFile: ConfigParser_1.crawlerConfig.configFile,
         date: Date.now(),
         original: ConfigParser_1.crawlerConfig.beforeUrl,
         comparator: ConfigParser_1.crawlerConfig.afterUrl,
-        pages: ConfigParser_1.crawlerConfig.pages
-    };
-    return JSON.stringify(output);
+        pages: ConfigParser_1.crawlerConfig.pages.map((page, index, array) => {
+            return {
+                id: page.id,
+                name: page.name,
+                url: page.url,
+                elementsToTest: page.elementsToTest.map(mapper)
+            };
+        })
+    });
 };
-let writeToDisk = function (contents) {
-    let outputPath = ConfigParser_1.crawlerConfig.outputPath;
-    fs.writeFile(outputPath, contents, function (err) {
+let createDiffJson = function () {
+    return createJson((diffElement) => {
+        return {
+            selector: diffElement.selector,
+            diff: diffElement.diff
+        };
+    });
+};
+let createOriginalJson = function () {
+    return createJson((diffElement) => {
+        return {
+            selector: diffElement.selector,
+            original: diffElement.original
+        };
+    });
+};
+let createComparandJson = function () {
+    return createJson((diffElement) => {
+        return {
+            selector: diffElement.selector,
+            comparand: diffElement.comparand
+        };
+    });
+};
+let writeToDisk = function (contents, path) {
+    fs.writeFile(path, contents, function (err) {
         if (err)
             console.error(err);
         console.log('Written!');

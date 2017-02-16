@@ -24,6 +24,6 @@ exports.crawlerConfig = {
             elementsToTest: sharedElementsToTest
         }
     ],
-    outputPath: 'd:/output.txt'
+    outputPath: 'd:/output.json'
 };
 //# sourceMappingURL=test-config.js.map

@@ -1,4 +1,4 @@
 interface IScrapedObj {
-    computedStyles: IComputedStyles,
-    ignoreCount: number
+    computedStyles: IComputedStyles;
+    ignoreCount: number;
 }

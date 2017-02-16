@@ -23,5 +23,5 @@ export const crawlerConfig = {
             elementsToTest: sharedElementsToTest
         }
     ],
-    outputPath: 'd:/output.txt'
+    outputPath: 'd:/output.json'
 };
