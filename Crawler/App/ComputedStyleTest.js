@@ -64,7 +64,6 @@ function init() {
     }
 }
 exports.init = init;
-;
 /**
  * The default action of scraping the original and comparand styles and generating a diff object from them.
  *

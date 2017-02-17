@@ -4,6 +4,9 @@
     "target": "es6",
     "sourceMap": true
   },
+  "include": [
+    "../node_modules/@types/"
+  ],
   "exclude": [
     "node_modules"
   ]
