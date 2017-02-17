@@ -4,10 +4,10 @@ To help refactor CSS across a large site this will crawl through an original and
 The simplest way to use this is to provide:
 - Two different URLs to the site you want to check - the original and revised (normally the site hosted on your local dev machine and the live version of the site)
 - A number of paths to pages you want the to crawl (i.e. /home/ or /article/)
-- A number of selectors for elements on those pages (i.e. #header or .article-heading). This can just be the html element if you don't want to devide up the results
+- A number of selectors for elements on those pages (i.e. #header or .article-heading). This can just be the html element if you don't want to divide up the results
 
 When run the application will generate three files:
-- A JSON file containing all the orignal computed styles scraped
+- A JSON file containing all the original computed styles scraped
 - A JSON file containing all the revised computed styles scraped
 - A JSON file containing the difference between the two
 
