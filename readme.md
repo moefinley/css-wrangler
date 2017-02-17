@@ -19,7 +19,7 @@ To run crawler use the following command
 
 ```node Crawler\App.js --config your-config-file.js```
 
-The config file is a CommonJS module export a variable called ```crawlerConfig```
+The config file is a CommonJS module exporting a variable called ```crawlerConfig```
 
 ```
 export const crawlerConfig = {
