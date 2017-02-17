@@ -11,7 +11,7 @@ When run the application will generate three files:
 - A JSON file containing all the revised computed styles scraped
 - A JSON file containing the difference between the two
 
-The difference can then been viewed through Results/Results.html
+The difference can then be viewed through Results/Results.html
 ![screen shot](https://github.com/moefinley/css-wrangler/raw/master/screenshot.png)
  
 ## Running the Crawler
