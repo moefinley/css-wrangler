@@ -1,12 +1,18 @@
-# Basic implementation of Frozen DOM/Computed Style testing
-With this application you provide:
-- Two different host names (normally the site hosted on your local dev machine and the live version of the site)
-- A number of pages (i.e. /home/ or /article/)
-- A number of selectors for elements on those pages (i.e. #header or .article-heading)
+# Frozen DOM/Computed Style testing
+To help refactor CSS across a large site this will crawl through an original and revised version of the site and show you the difference to the computed styles (the final result of all CSS applied to an element) of all the elements on all of the pages.
 
-This application will then produce a JSON file containing details for any style differences between the two pages. The JSON file can be read by Results.html which provides a quick overview and a way to drill into the details of the differences.
+The simplest way to use this is to provide:
+- Two different URLs to the site you want to check - the original and revised (normally the site hosted on your local dev machine and the live version of the site)
+- A number of paths to pages you want the to crawl (i.e. /home/ or /article/)
+- A number of selectors for elements on those pages (i.e. #header or .article-heading). This can just be the html element if you don't want to devide up the results
 
-This is a very rough implementation and still requires work to improve the usability. Also it has yet to be heavly tested and might be unstable in certain situations (that I've yet to discover).
+When run the application will generate three files:
+- A JSON file containing all the orignal computed styles scraped
+- A JSON file containing all the revised computed styles scraped
+- A JSON file containing the difference between the two
+
+The difference can then been viewed through Results/Results.html
+![screen shot](https://github.com/moefinley/css-wrangler/raw/master/screenshot.png)
  
 ## Running the Crawler
 To run crawler use the following command
