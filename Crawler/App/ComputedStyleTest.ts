@@ -6,7 +6,7 @@ import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
 import {scrapeComputedStyles} from "./BrowserScript/ScrapeComputedStyles";
-import {logInfo} from "./Logging/Logging";
+import {logInfo, logError} from "./Logging/Logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
 import diff = require("deep-diff");
@@ -59,33 +59,70 @@ export function init() {
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
-        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
-        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
+        if(crawlerConfig.originalData === null) {
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+        }
+        if(!crawlerConfig.getOriginal) beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
 
-        Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            logInfo(`Diff obj length: ${allResultsArray.length}`);
-
-            for (let index in page.elementsToTest) {
-                let diffElement = page.elementsToTest[index];
-                diffElement.diff = differ(diffElement.original, diffElement.comparand);
-                cleanDiffElement(diffElement);
-            }
-
-            page.elementsToTest = page.elementsToTest.filter((diffElement) => {
-                return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
-            });
-
-            if (index == (crawlerConfig.pages.length - 1).toString()) {
-                logInfo('last page complete');
-                writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
-                writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
-                writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
-                unloadSelenium();
-            }
-        }, (err) => {
-            console.log(err);
+        Promise.all(beforeAndAfterPromises)
+            .then((allResultsArray) => {
+                if(crawlerConfig.getOriginal) {
+                    generateRawOriginal(page);
+                } else {
+                    generateBothAndProcessDiff(page, allResultsArray);
+                }
+        }, (error) => {
+            logError(error);
         });
     }
+}
+
+/**
+ * The default action of scraping the original and comparand styles and generating a diff object from them.
+ *
+ * @param page
+ * @param allResultsArray
+ */
+let generateBothAndProcessDiff = function(page:IPage, allResultsArray:IScrapedObj[][]){
+    for (let index in page.elementsToTest) {
+        let diffElement = page.elementsToTest[index];
+        diffElement.diff = differ(diffElement.original, diffElement.comparand);
+        cleanDiffElement(diffElement);
+    }
+
+    page.elementsToTest = page.elementsToTest.filter((diffElement) => {
+        return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
+    });
+    page.isProcessed = true;
+
+    if (checkAllPagesProcessed()) {
+        logInfo('last page complete');
+        writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
+        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
+        writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
+        unloadSelenium();
+    }
+};
+
+/**
+ * When the --getOriginal switch is passed this function is used to only get original styles and save them to disk.
+ * No comparand or diff object is created.
+ *
+ * @param page
+ */
+let generateRawOriginal = function(page:IPage):void{
+    page.isProcessed = true;
+    if (checkAllPagesProcessed()) {
+        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
+    }
+};
+
+let checkAllPagesProcessed = function ():boolean{
+    let returnVal = true;
+    crawlerConfig.pages.forEach((page)=>{
+        if(page.isProcessed === false) returnVal = false;
+    });
+    return returnVal;
 };
 
 let createJson = function(mapper:(IDiffElement)=>any):string {

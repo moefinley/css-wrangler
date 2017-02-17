@@ -45,32 +45,69 @@ function init() {
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${ConfigParser_1.crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${ConfigParser_1.crawlerConfig.afterUrl}${page.url}`;
-        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
-        beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
-        Promise.all(beforeAndAfterPromises).then((allResultsArray) => {
-            Logging_1.logInfo(`Diff obj length: ${allResultsArray.length}`);
-            for (let index in page.elementsToTest) {
-                let diffElement = page.elementsToTest[index];
-                diffElement.diff = differ(diffElement.original, diffElement.comparand);
-                CleanDiffElement_1.cleanDiffElement(diffElement);
+        if (ConfigParser_1.crawlerConfig.originalData === null) {
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+        }
+        if (!ConfigParser_1.crawlerConfig.getOriginal)
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
+        Promise.all(beforeAndAfterPromises)
+            .then((allResultsArray) => {
+            if (ConfigParser_1.crawlerConfig.getOriginal) {
+                generateRawOriginal(page);
             }
-            page.elementsToTest = page.elementsToTest.filter((diffElement) => {
-                return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
-            });
-            if (index == (ConfigParser_1.crawlerConfig.pages.length - 1).toString()) {
-                Logging_1.logInfo('last page complete');
-                writeToDisk(createDiffJson(), ConfigParser_1.crawlerConfig.diffOutputPath.dir + ConfigParser_1.crawlerConfig.diffOutputPath.base);
-                writeToDisk(createOriginalJson(), ConfigParser_1.crawlerConfig.originalOutputPath.dir + ConfigParser_1.crawlerConfig.originalOutputPath.base);
-                writeToDisk(createComparandJson(), ConfigParser_1.crawlerConfig.comparandOutputPath.dir + ConfigParser_1.crawlerConfig.comparandOutputPath.base);
-                unloadSelenium();
+            else {
+                generateBothAndProcessDiff(page, allResultsArray);
             }
-        }, (err) => {
-            console.log(err);
+        }, (error) => {
+            Logging_1.logError(error);
         });
     }
 }
 exports.init = init;
-;
+/**
+ * The default action of scraping the original and comparand styles and generating a diff object from them.
+ *
+ * @param page
+ * @param allResultsArray
+ */
+let generateBothAndProcessDiff = function (page, allResultsArray) {
+    for (let index in page.elementsToTest) {
+        let diffElement = page.elementsToTest[index];
+        diffElement.diff = differ(diffElement.original, diffElement.comparand);
+        CleanDiffElement_1.cleanDiffElement(diffElement);
+    }
+    page.elementsToTest = page.elementsToTest.filter((diffElement) => {
+        return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
+    });
+    page.isProcessed = true;
+    if (checkAllPagesProcessed()) {
+        Logging_1.logInfo('last page complete');
+        writeToDisk(createDiffJson(), ConfigParser_1.crawlerConfig.diffOutputPath.dir + ConfigParser_1.crawlerConfig.diffOutputPath.base);
+        writeToDisk(createOriginalJson(), ConfigParser_1.crawlerConfig.originalOutputPath.dir + ConfigParser_1.crawlerConfig.originalOutputPath.base);
+        writeToDisk(createComparandJson(), ConfigParser_1.crawlerConfig.comparandOutputPath.dir + ConfigParser_1.crawlerConfig.comparandOutputPath.base);
+        unloadSelenium();
+    }
+};
+/**
+ * When the --getOriginal switch is passed this function is used to only get original styles and save them to disk.
+ * No comparand or diff object is created.
+ *
+ * @param page
+ */
+let generateRawOriginal = function (page) {
+    page.isProcessed = true;
+    if (checkAllPagesProcessed()) {
+        writeToDisk(createOriginalJson(), ConfigParser_1.crawlerConfig.originalOutputPath.dir + ConfigParser_1.crawlerConfig.originalOutputPath.base);
+    }
+};
+let checkAllPagesProcessed = function () {
+    let returnVal = true;
+    ConfigParser_1.crawlerConfig.pages.forEach((page) => {
+        if (page.isProcessed === false)
+            returnVal = false;
+    });
+    return returnVal;
+};
 let createJson = function (mapper) {
     return JSON.stringify({
         configFile: ConfigParser_1.crawlerConfig.configFile,

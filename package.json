@@ -1,0 +1,41 @@
+{
+  "name": "css-wrangler",
+  "version": "0.9.0",
+  "description": "Computed styles scraping and reporting",
+  "main": "Crawler/App.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "startTestServer": "http-server Tests/TestSites/"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moefinley/css-wrangler.git"
+  },
+  "keywords": [
+    "CSS",
+    "computed",
+    "styles"
+  ],
+  "author": "Tim Neil",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/moefinley/css-wrangler/issues"
+  },
+  "homepage": "https://github.com/moefinley/css-wrangler#readme",
+  "devDependencies": {
+    "@types/bootstrap": "^3.3.32",
+    "@types/deep-diff": "0.0.30",
+    "@types/jquery": "^2.0.40",
+    "@types/knockout": "^3.4.39",
+    "@types/knockout.mapping": "^2.0.28",
+    "@types/selenium-webdriver": "^2.53.39"
+  },
+  "dependencies": {
+    "@types/escape-string-regexp": "0.0.30",
+    "@types/nopt": "^3.0.29",
+    "deep-diff": "latest",
+    "escape-string-regexp": "^1.0.5",
+    "nopt": "^4.0.1",
+    "selenium-webdriver": "^3.0.1"
+  }
+}

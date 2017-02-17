@@ -4,4 +4,5 @@ interface IPage {
     url:string;
     elementsToTest:IDiffElement[];
     elementsToIgnore:string[];
+    isProcessed: boolean;
 }

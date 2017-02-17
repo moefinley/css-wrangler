@@ -1,7 +1,9 @@
 import * as nopt from 'nopt';
 import * as path from 'path';
+import * as fs from 'fs';
 import {ParsedPath} from "path";
 import {Page} from "./Page";
+import {DiffElement} from "./DiffElement";
 
 /* External config file interfaces */
 interface IPageExtConfig {
@@ -21,28 +23,61 @@ interface ICrawlerExtConfig {
 
 /* Internal config object interfaces */
 interface ICrawlerInternalConfig {
+    getOriginal: boolean;
+    configFile: string;
+    diffOutputPath: ParsedPath;
+    originalOutputPath: ParsedPath;
+    comparandOutputPath: ParsedPath;
+    //TODO: Create three versions of the interface for with/without original and diff
+    originalData: ICrawlerInternalConfig;
     beforeUrl: string;
     afterUrl: string;
     pages: Page[];
-    diffOutputPath: ParsedPath; //TODO make this a path passed in as an argument
-    originalOutputPath: ParsedPath;
-    comparandOutputPath: ParsedPath;
 }
 
 class CrawlerConfig implements ICrawlerInternalConfig {
     diffOutputPath: ParsedPath;
     originalOutputPath: ParsedPath;
     comparandOutputPath: ParsedPath;
+    originalData: ICrawlerInternalConfig | null;
     beforeUrl: string;
     afterUrl: string;
     pages: Page[] = [];
-    constructor(public configFile: string, rawConfig:ICrawlerExtConfig){
+    constructor(
+        public configFile: string,
+        public getOriginal: boolean,
+        rawConfig:ICrawlerExtConfig,
+        originalData: ICrawlerInternalConfig | null
+    ){
+        this.originalData = originalData;
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        rawConfig.pages.forEach(e => this.pages.push(new Page(e.id, e.name, e.path, e.elementsToTest, e.elementsToIgnore)));
         this.diffOutputPath = path.parse(rawConfig.outputPath);
         this.originalOutputPath = path.parse(this.diffOutputPath.root + this.diffOutputPath.name + "-original" + this.diffOutputPath.ext);
         this.comparandOutputPath = path.parse(this.diffOutputPath.root + this.diffOutputPath.name + "-comparand" + this.diffOutputPath.ext);
+
+        if(this.originalData === null){
+            this.pages = rawConfig.pages.map(page => new Page(
+                page.id,
+                page.name,
+                page.path,
+                page.elementsToTest.map(elementToTestSelector => new DiffElement(elementToTestSelector)),
+                page.elementsToIgnore
+            ));
+        } else {
+            this.pages = rawConfig.pages.map((page) => {
+                let originalDataPage = this.originalData.pages.find((originalDataPage)=>{
+                    return page.id === originalDataPage.id;
+                });
+                return new Page(
+                    page.id,
+                    page.name,
+                    page.path,
+                    originalDataPage.elementsToTest,
+                    page.elementsToIgnore
+                )
+            });
+        }
     }
 }
 
@@ -63,7 +98,7 @@ let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
     if(checkArray(rawConfig.pages)){
         let returnVal = true;
         rawConfig.pages.forEach((page)=>{
-            if(!checkString(page.id)) returnVal = false;
+            if(!checkString(page.id)) returnVal = false; //TODO: Check that all IDs are unique
             if(!checkString(page.name)) returnVal = false;
             if(!checkString(page.path)) returnVal = false;
             if(checkArray(page.elementsToTest)){
@@ -78,17 +113,35 @@ let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
     return true;
 };
 
-let noptConfigKnownOpts = { "config" : path };
+let noptConfigKnownOpts = {
+    'config' : path,
+    'getOriginal' : Boolean,
+    'original' : path
+};
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
 let rawConfig;
 try {
     rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
 } catch (e) {
-    throw "No config file found : " + e.message;
+    throw `No config file found : ${e.message}`;
 }
 
-if(!validateRawConfig(rawConfig)) {
-    throw "invalid config";
+if(!validateRawConfig(rawConfig)) throw 'Invalid config';
+
+let originalData = null;
+if(typeof parsed.original !== "undefined"){
+    try {
+        originalData = JSON.parse(fs.readFileSync(parsed.original, 'utf8'));
+    } catch(e) {
+        throw 'could not read original file';
+    }
+
 }
-export const crawlerConfig = new CrawlerConfig(parsed.config, rawConfig);
+
+export const crawlerConfig = new CrawlerConfig(
+    parsed.config,
+    parsed.getOriginal,
+    rawConfig,
+    originalData
+);
