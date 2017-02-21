@@ -21,6 +21,9 @@
   "bugs": {
     "url": "https://github.com/moefinley/css-wrangler/issues"
   },
+  "bin" : {
+    "css-wrangler": "./Crawler/bin/css-crawler"
+  },
   "homepage": "https://github.com/moefinley/css-wrangler#readme",
   "devDependencies": {
     "@types/bootstrap": "^3.3.32",

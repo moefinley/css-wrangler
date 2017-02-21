@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Results</title>
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="libs/bootstrap/css/bootstrap-theme.css">
+    <link rel="stylesheet" href="results.css">
+    <script src="libs/jquery-3.1.1.min.js"></script>
+    <script src="libs/knockout-3.4.1.debug.js"></script>
+    <script src="libs/knockout.mapping-latest.js"></script>
+    <script src="libs/bootstrap/js/bootstrap.min.js"></script>
+    <script src="libs/require.js" data-main="Results.js"></script>
+</head>
+<body>
+<div class="modal fade in" id="fileInputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-show="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+            </div>
+            <div class="modal-body">
+
+                <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="form-inline">
+
+                    <fieldset class="form-group">
+                        <label for="fileinput">Select a JSON file</label>
+                        <input type="file" id="fileinput">
+                    </fieldset>
+
+                </form>
+            </div>
+            <div class="modal-footer">
+                <input type="button" id="btnLoad" value="Load" data-bind="click: loadFile"
+                       class="btn btn-default" data-toggle="modal" data-target="fileInputModal">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <div class="col-xs-12">
+        <section>
+            <header>
+                <h1>Results for:</h1>
+                <dl class="dl-horizontal">
+                    <dt>Config file</dt>
+                    <dd data-bind="text: data.configFile"></dd>
+                    <dt>Original</dt>
+                    <dd data-bind="text: data.original"></dd>
+                    <dt>Comparator</dt>
+                    <dd data-bind="text: data.comparator"></dd>
+                    <dt>Date</dt>
+                    <dd data-bind="text: convertedDate"></dd>
+                </dl>
+                <div class="well" data-bind="foreach: filters">
+                    <label class="checkbox-inline">
+                        <input type="checkbox" data-bind="checked: isSelected">
+                        <span data-bind="text: name"></span>
+                    </label>
+                </div>
+            </header>
+            <article>
+                <h2>Pages:</h2>
+                <div data-bind="foreach:data.pages">
+                    <bs-collapsible-panel params="page:$data">
+                        <div class="panel-heading">
+                            <span class="glyphicon glyphicon-file"></span>
+                            <span data-bind="text:page.name"></span>
+                            <span class="pull-right">
+                                Elements: <span class="label label-as-badge label-default"
+                                                data-bind="text: page.elementsWithElementChangesCount, css: {'label-warning': page.elementsWithElementChangesCount() > 0, 'label-success': page.elementsWithElementChangesCount() < 1}"></span>
+                                Styles: <span class="label label-as-badge"
+                                              data-bind="text: page.elementsWithStyleChangesCount, css: {'label-danger': page.elementsWithStyleChangesCount() > 0, 'label-success': page.elementsWithStyleChangesCount() < 1}"></span>
+                            </span>
+                        </div>
+                        <div class="well">
+                            <!-- ko foreach: page.elementsToTest -->
+                            <bs-collapsible-panel
+                                    params="diffElement:$data">
+                                        <span class="panel-heading">
+                                            <span data-bind="text: diffElement.selector"></span>
+                                            <span class="pull-right">
+                                                Elements: <span class="label label-as-badge label-default"
+                                                                data-bind="text: diffElement.elementDiffs.length, css: {'label-warning': diffElement.elementDiffs.length > 0, 'label-success': diffElement.elementDiffs.length < 1}"></span>
+                                                Styles: <span class="label label-as-badge"
+                                                              data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
+                                            </span>
+                                        </span>
+                                <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
+                            </bs-collapsible-panel>
+                            <!-- /ko -->
+                        </div>
+                    </bs-collapsible-panel>
+                </div>
+            </article>
+        </section>
+    </div>
+</div>
+
+<!--<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>-->
+</body>
+</html>
