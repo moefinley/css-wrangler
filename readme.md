@@ -73,8 +73,10 @@ file into the results.html
 ## Roadmap 
  
 ### Short term
+ - Fix the xpath's missing slash
  - Show the number of ignored elements on results page
  - Break down ComputedStyleTest.ts into separate concerns
+ - Open the results page from a command
  - Capture Selenium errors and translate them to more user friendly errors
     + Selenium error 'element can't be found' should list the element selector and the current page
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
