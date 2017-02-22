@@ -50,13 +50,31 @@ Open ```Results/Results.html``` and load any JSON file the crawler has produced.
 
 The numbers next to each page show the number of style changes and the number of element/content changes. 
 Potentially there are more style changes within these elements but without something to compare it to the crawler can't tell.
+
+## Only gathering styles
+To gather styles which will be compared at a later date add this switch:
+
+`--getOriginal`
+
+It will gather styles using the `beforeUrl` from the provided config file.
+
+This can be used locally, before and after you make changes. It can also be used to gather styles as part of continuous 
+integration to gather styles for each build.
+
+## Comparing previously gathered styles
+
+You can compare previously gathered styles:
+
+`--original my-original-styles.json`
+
+This will generate a diff from the original styles in the file and the `afterUrl` of the config. You can load this diff 
+file into the results.html
  
 ## Roadmap 
  
 ### Short term
  - Show the number of ignored elements on results page
  - Break down ComputedStyleTest.ts into separate concerns
- - Add elements to ignore to crawler configuration
  - Capture Selenium errors and translate them to more user friendly errors
     + Selenium error 'element can't be found' should list the element selector and the current page
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
