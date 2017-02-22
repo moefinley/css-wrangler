@@ -9,4 +9,4 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.Filter = Filter;
 });
-//# sourceMappingURL=Filter.js.map
+//# sourceMappingURL=filter.js.map

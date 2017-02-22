@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "module": "AMD",
+    "module": "commonjs",
     "target": "es6",
     "sourceMap": true
   },
@@ -9,6 +9,7 @@
     "../node_modules/@types/"
   ],
   "exclude": [
+    "../results/",
     "node_modules"
   ]
 }

@@ -28,4 +28,4 @@ define(["require", "exports"], function (require, exports) {
     }
     exports.loadFile = loadFile;
 });
-//# sourceMappingURL=FileOperations.js.map
+//# sourceMappingURL=fileOperations.js.map

@@ -83,3 +83,4 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToI
     iterateThroughChildren(parentElement, scrapedObj.computedStyles);
     return scrapedObj;
 };
+//# sourceMappingURL=scrapeComputedStyles.js.map

@@ -5,4 +5,4 @@ define(["require", "exports", "./mapping/page", "./mapping/diffElement"], functi
         'elementsToTest': diffElement_1.diffElementMapper
     };
 });
-//# sourceMappingURL=Mapping.js.map
+//# sourceMappingURL=mapping.js.map

@@ -21,7 +21,7 @@
   "bugs": {
     "url": "https://github.com/moefinley/css-wrangler/issues"
   },
-  "bin" : {
+  "bin": {
     "css-wrangler": "./Crawler/bin/css-crawler"
   },
   "homepage": "https://github.com/moefinley/css-wrangler#readme",
@@ -31,6 +31,7 @@
     "@types/jquery": "^2.0.40",
     "@types/knockout": "^3.4.39",
     "@types/knockout.mapping": "^2.0.28",
+    "@types/node": "^7.0.5",
     "@types/selenium-webdriver": "^2.53.39"
   },
   "dependencies": {
