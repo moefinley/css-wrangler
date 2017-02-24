@@ -13,8 +13,8 @@ class CrawlerConfig {
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
         this.diffOutputPath = path.parse(rawConfig.outputPath);
-        this.originalOutputPath = path.parse(this.diffOutputPath.root + this.diffOutputPath.name + "-original" + this.diffOutputPath.ext);
-        this.comparandOutputPath = path.parse(this.diffOutputPath.root + this.diffOutputPath.name + "-comparand" + this.diffOutputPath.ext);
+        this.originalOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-original" + this.diffOutputPath.ext);
+        this.comparandOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-comparand" + this.diffOutputPath.ext);
         if (this.originalData === null) {
             this.pages = rawConfig.pages.map(page => new Page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore));
         }
