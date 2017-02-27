@@ -25,9 +25,9 @@ interface ICrawlerExtConfig {
 interface ICrawlerInternalConfig {
     getOriginal: boolean;
     configFile: string;
-    diffOutputPath: ParsedPath;
-    originalOutputPath: ParsedPath;
-    comparandOutputPath: ParsedPath;
+    diffOutputPath: string;
+    originalOutputPath: string;
+    comparandOutputPath: string;
     //TODO: Create three versions of the interface for with/without original and diff
     originalData: ICrawlerInternalConfig;
     beforeUrl: string;
@@ -36,9 +36,9 @@ interface ICrawlerInternalConfig {
 }
 
 class CrawlerConfig implements ICrawlerInternalConfig {
-    diffOutputPath: ParsedPath;
-    originalOutputPath: ParsedPath;
-    comparandOutputPath: ParsedPath;
+    diffOutputPath: string;
+    originalOutputPath: string;
+    comparandOutputPath: string;
     originalData: ICrawlerInternalConfig | null;
     beforeUrl: string;
     afterUrl: string;
@@ -52,9 +52,10 @@ class CrawlerConfig implements ICrawlerInternalConfig {
         this.originalData = originalData;
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        this.diffOutputPath = path.parse(rawConfig.outputPath);
-        this.originalOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-original" + this.diffOutputPath.ext);
-        this.comparandOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-comparand" + this.diffOutputPath.ext);
+        let outputPath = path.parse(rawConfig.outputPath);
+        this.diffOutputPath = path.normalize(rawConfig.outputPath);
+        this.originalOutputPath = path.normalize(outputPath.dir + outputPath.name + "-original" + outputPath.ext);
+        this.comparandOutputPath = path.normalize(outputPath.dir + outputPath.name + "-comparand" + outputPath.ext);
 
         if(this.originalData === null){
             this.pages = rawConfig.pages.map(page => new Page(
@@ -124,7 +125,7 @@ let rawConfig;
 try {
     rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
 } catch (e) {
-    throw `No config file found : ${e.message}`;
+    throw `No config file found or invalid commonjs module : ${e.message}`;
 }
 
 if(!validateRawConfig(rawConfig)) throw 'Invalid config';

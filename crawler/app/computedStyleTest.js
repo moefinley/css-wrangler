@@ -82,9 +82,9 @@ let generateBothAndProcessDiff = function (page, allResultsArray) {
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         logging_1.logInfo('last page complete');
-        writeToDisk(createDiffJson(), configParser_1.crawlerConfig.diffOutputPath.dir + configParser_1.crawlerConfig.diffOutputPath.base);
-        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath.dir + configParser_1.crawlerConfig.originalOutputPath.base);
-        writeToDisk(createComparandJson(), configParser_1.crawlerConfig.comparandOutputPath.dir + configParser_1.crawlerConfig.comparandOutputPath.base);
+        writeToDisk(createDiffJson(), configParser_1.crawlerConfig.diffOutputPath);
+        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
+        writeToDisk(createComparandJson(), configParser_1.crawlerConfig.comparandOutputPath);
         unloadSelenium();
     }
 };
@@ -97,7 +97,7 @@ let generateBothAndProcessDiff = function (page, allResultsArray) {
 let generateRawOriginal = function (page) {
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
-        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath.dir + configParser_1.crawlerConfig.originalOutputPath.base);
+        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
     }
 };
 let checkAllPagesProcessed = function () {
@@ -148,11 +148,11 @@ let createComparandJson = function () {
         };
     });
 };
-let writeToDisk = function (contents, path) {
-    fs.writeFile(path, contents, function (err) {
+let writeToDisk = function (contents, pathToFile) {
+    fs.writeFile(pathToFile, contents, function (err) {
         if (err)
             console.error(err);
-        console.log('Written!');
+        console.log('Written to ' + pathToFile);
     });
 };
 //# sourceMappingURL=computedStyleTest.js.map

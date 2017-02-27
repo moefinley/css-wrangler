@@ -12,9 +12,10 @@ class CrawlerConfig {
         this.originalData = originalData;
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
-        this.diffOutputPath = path.parse(rawConfig.outputPath);
-        this.originalOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-original" + this.diffOutputPath.ext);
-        this.comparandOutputPath = path.parse(this.diffOutputPath.dir + this.diffOutputPath.name + "-comparand" + this.diffOutputPath.ext);
+        let outputPath = path.parse(rawConfig.outputPath);
+        this.diffOutputPath = path.normalize(rawConfig.outputPath);
+        this.originalOutputPath = path.normalize(outputPath.dir + outputPath.name + "-original" + outputPath.ext);
+        this.comparandOutputPath = path.normalize(outputPath.dir + outputPath.name + "-comparand" + outputPath.ext);
         if (this.originalData === null) {
             this.pages = rawConfig.pages.map(page => new Page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore));
         }
@@ -75,7 +76,7 @@ try {
     rawConfig = require(parsed.config).crawlerConfig;
 }
 catch (e) {
-    throw `No config file found : ${e.message}`;
+    throw `No config file found or invalid commonjs module : ${e.message}`;
 }
 if (!validateRawConfig(rawConfig))
     throw 'Invalid config';

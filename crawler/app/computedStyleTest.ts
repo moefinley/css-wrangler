@@ -2,6 +2,7 @@ import describe = testing.describe;
 import * as testing from "selenium-webdriver/testing";
 import {crawlerConfig} from './configParser';
 import * as fs from "fs";
+import * as path from 'path';
 import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
@@ -97,9 +98,9 @@ let generateBothAndProcessDiff = function(page:pageInterface, allResultsArray:sc
 
     if (checkAllPagesProcessed()) {
         logInfo('last page complete');
-        writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath.dir + crawlerConfig.diffOutputPath.base);
-        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
-        writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath.dir + crawlerConfig.comparandOutputPath.base);
+        writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath);
+        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
+        writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath);
         unloadSelenium();
     }
 };
@@ -113,7 +114,7 @@ let generateBothAndProcessDiff = function(page:pageInterface, allResultsArray:sc
 let generateRawOriginal = function(page:pageInterface):void{
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
-        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath.dir + crawlerConfig.originalOutputPath.base);
+        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
     }
 };
 
@@ -171,11 +172,11 @@ let createComparandJson = function ():string {
     })
 };
 
-let writeToDisk = function (contents, path) {
-    fs.writeFile(path, contents, function (err) {
+let writeToDisk = function (contents, pathToFile) {
+    fs.writeFile(pathToFile, contents, function (err) {
         if (err)
             console.error(err);
-        console.log('Written!');
+        console.log('Written to ' + pathToFile);
     });
 };
 
