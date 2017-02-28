@@ -5,14 +5,6 @@
  */
 exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToIgnore) {
     /* This is run in the browser and therefore must stay cross compatible */
-    var scrapedObj = {
-        computedStyles: {},
-        ignoreCount: 0
-    };
-    var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
-    if (parentElement === null) {
-        throw 'could not find element';
-    }
     var Xpath = {};
     Xpath.getElementXPath = function (element) {
         if (element && element.id)
@@ -80,7 +72,24 @@ exports.scrapeComputedStyles = function (parentElementQuerySelector, elementsToI
             iterateThroughChildren(childElement, thisObject.children[xpathOfChild]);
         }
     }
-    iterateThroughChildren(parentElement, scrapedObj.computedStyles);
+    try {
+        var scrapedObj = {
+            computedStyles: {},
+            ignoreCount: 0
+        };
+        var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
+        if (parentElement === null) {
+            throw 'could not find element';
+        }
+        iterateThroughChildren(parentElement, scrapedObj.computedStyles);
+    }
+    catch (e) {
+        return {
+            computedStyles: null,
+            ignoreCount: null,
+            error: 'There was an error accessing element ' + parentElementQuerySelector
+        };
+    }
     return scrapedObj;
 };
 //# sourceMappingURL=scrapeComputedStyles.js.map

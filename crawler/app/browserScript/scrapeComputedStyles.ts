@@ -4,14 +4,6 @@
  */
 export var scrapeComputedStyles = function (parentElementQuerySelector:string, elementsToIgnore:string[]): scrapedObjInterface  {
     /* This is run in the browser and therefore must stay cross compatible */
-    var scrapedObj = {
-        computedStyles: <computedStylesInterface>{},
-        ignoreCount: 0
-    };
-    var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
-    if(parentElement === null){
-        throw 'could not find element';
-    }
     var Xpath:any = {};
     Xpath.getElementXPath = function(element:Element) {
         if (element && element.id)
@@ -91,7 +83,24 @@ export var scrapeComputedStyles = function (parentElementQuerySelector:string, e
         }
     }
 
-    iterateThroughChildren(parentElement, scrapedObj.computedStyles);
+    try{
+        var scrapedObj = {
+            computedStyles: <computedStylesInterface>{},
+            ignoreCount: 0
+        };
+        var parentElement = document.querySelector(parentElementQuerySelector); //TODO: Cross compatible selector
+        if(parentElement === null){
+            throw 'could not find element';
+        }
+        iterateThroughChildren(parentElement, scrapedObj.computedStyles);
+    } catch(e) {
+        return {
+            computedStyles: null,
+            ignoreCount: null,
+            error: 'There was an error accessing element ' + parentElementQuerySelector
+        };
+    }
+
 
     return scrapedObj;
 };

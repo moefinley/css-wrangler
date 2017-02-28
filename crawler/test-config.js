@@ -21,7 +21,7 @@ exports.crawlerConfig = {
             id: 'same',
             name: 'Same page',
             path: '/same.html',
-            elementsToTest: sharedElementsToTest
+            elementsToTest: sharedElementsToTest.concat(['.i-dont-exist'])
         }
     ],
     outputPath: 'd:/output.json'

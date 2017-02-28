@@ -26,15 +26,20 @@ function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, e
     for (let diffElement of elementsToScrape) {
         promiseArray.push(driver.executeScript(scrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
             .then((resultsOfScraping) => {
-            logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-            logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
-            if (isOriginal) {
-                diffElement.original = resultsOfScraping.computedStyles;
+            if (typeof resultsOfScraping.error !== "undefined") {
+                logging_1.logError(resultsOfScraping.error + ' on page ' + pageName);
             }
             else {
-                diffElement.comparand = resultsOfScraping.computedStyles;
+                logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
+                logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+                if (isOriginal) {
+                    diffElement.original = resultsOfScraping.computedStyles;
+                }
+                else {
+                    diffElement.comparand = resultsOfScraping.computedStyles;
+                }
+                return resultsOfScraping;
             }
-            return resultsOfScraping;
         }));
     }
     return Promise.all(promiseArray);

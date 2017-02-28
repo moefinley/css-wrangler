@@ -77,13 +77,15 @@ file into the results.html
  - Show the number of ignored elements on results page
  - Break down ComputedStyleTest.ts into separate concerns
  - Open the results page from a command
- - Capture Selenium errors and translate them to more user friendly errors
-    + Selenium error 'element can't be found' should list the element selector and the current page
+ - Improve logging (Standard log, verbose log, error log and switches)
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
 
 ### Medium term
  - Allow the gathering of a/b computed styles and the comparision to happen at separate times
- - Allow Selenium commands and/or JavaScript functions to be run on the page before gathering computed styles. This would allow for JavaScript features to be tested. 
+ - Improve the flexability of Selenium
+ -- Allow JavaScript features to be tested by describe page 'states' within the config. These would be selenium commands 
+  run before scraping the styles (i.e. `loginButtonElement.click()` or `action.moveToElement(dropDownMenu)`).
+ -- Allow configuration of Selenium from the config and command line. IE, Chrome, Firefox etc. and browser width.
  
 ### Long term
  - Save data to database instead of JSON file
