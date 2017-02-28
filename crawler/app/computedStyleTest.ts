@@ -43,6 +43,7 @@ function getComputedStylesForPage(
             .then((resultsOfScraping):scrapedObjInterface => {
             if(typeof resultsOfScraping.error !== "undefined"){
                 logError(resultsOfScraping.error + ' on page ' + pageName);
+                diffElement.error = 'there was an error when gathering styles for this element';
             }else{
                 logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
                 logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
@@ -58,23 +59,46 @@ function getComputedStylesForPage(
     return Promise.all(promiseArray);
 }
 
+enum Processes {
+    "getOriginal",
+    "getBothAndGenerateDiff",
+    "useProvidedOriginalAndGenerateDiff"
+}
+
 export function init() {
+
     for (let index in crawlerConfig.pages) {
         let page = crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
-        if(crawlerConfig.originalData === null) {
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+
+        let currentProcess:Processes = Processes.getBothAndGenerateDiff;
+        if(crawlerConfig.originalData !== null) currentProcess = Processes.useProvidedOriginalAndGenerateDiff;
+        if(crawlerConfig.getOriginal) currentProcess = Processes.getOriginal;
+
+        let addPagePromiseToArray = function(isOriginal:boolean) {
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal?beforePageUrl:afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
+        };
+        if(currentProcess === Processes.getBothAndGenerateDiff){
+            addPagePromiseToArray(true);
+            addPagePromiseToArray(false);
         }
-        if(!crawlerConfig.getOriginal) beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
+
+        if(currentProcess === Processes.useProvidedOriginalAndGenerateDiff){
+            addPagePromiseToArray(false);
+        }
+
+        if(currentProcess === Processes.getOriginal){
+            addPagePromiseToArray(true);
+        }
 
         Promise.all(beforeAndAfterPromises)
             .then((allResultsArray) => {
                 if(crawlerConfig.getOriginal) {
-                    generateRawOriginal(page);
+                    parseRawOriginalAndSave(page);
                 } else {
-                    generateBothAndProcessDiff(page, allResultsArray);
+                    parseBothGenerateDiffAndSave(page, allResultsArray);
                 }
         }, (error) => {
             logError(error);
@@ -88,7 +112,7 @@ export function init() {
  * @param page
  * @param allResultsArray
  */
-let generateBothAndProcessDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][]){
+let parseBothGenerateDiffAndSave = function(page:pageInterface, allResultsArray:scrapedObjInterface[][]){
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
         diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -115,7 +139,7 @@ let generateBothAndProcessDiff = function(page:pageInterface, allResultsArray:sc
  *
  * @param page
  */
-let generateRawOriginal = function(page:pageInterface):void{
+let parseRawOriginalAndSave = function(page:pageInterface):void{
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
@@ -160,6 +184,11 @@ let createDiffJson = function ():string {
 
 let createOriginalJson = function ():string {
     return createJson((diffElement)=>{
+        if(typeof diffElement.error !== "undefined"){
+            return {
+                error: diffElement.error
+            }
+        }
         return {
             selector: diffElement.selector,
             original: diffElement.original

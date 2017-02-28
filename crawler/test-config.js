@@ -24,6 +24,6 @@ exports.crawlerConfig = {
             elementsToTest: sharedElementsToTest.concat(['.i-dont-exist'])
         }
     ],
-    outputPath: 'd:/output.json'
+    outputPath: '../../tests/test.json'
 };
 //# sourceMappingURL=test-config.js.map

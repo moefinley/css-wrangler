@@ -14,8 +14,8 @@ class CrawlerConfig {
         this.afterUrl = rawConfig.afterUrl;
         let outputPath = path.parse(rawConfig.outputPath);
         this.diffOutputPath = path.normalize(rawConfig.outputPath);
-        this.originalOutputPath = path.normalize(outputPath.dir + outputPath.name + "-original" + outputPath.ext);
-        this.comparandOutputPath = path.normalize(outputPath.dir + outputPath.name + "-comparand" + outputPath.ext);
+        this.originalOutputPath = path.join(outputPath.dir, outputPath.name + "-original" + outputPath.ext);
+        this.comparandOutputPath = path.join(outputPath.dir, outputPath.name + "-comparand" + outputPath.ext);
         if (this.originalData === null) {
             this.pages = rawConfig.pages.map(page => new Page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore));
         }

@@ -28,6 +28,7 @@ function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, e
             .then((resultsOfScraping) => {
             if (typeof resultsOfScraping.error !== "undefined") {
                 logging_1.logError(resultsOfScraping.error + ' on page ' + pageName);
+                diffElement.error = 'there was an error when gathering styles for this element';
             }
             else {
                 logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
@@ -44,24 +45,43 @@ function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, e
     }
     return Promise.all(promiseArray);
 }
+var Processes;
+(function (Processes) {
+    Processes[Processes["getOriginal"] = 0] = "getOriginal";
+    Processes[Processes["getBothAndGenerateDiff"] = 1] = "getBothAndGenerateDiff";
+    Processes[Processes["useProvidedOriginalAndGenerateDiff"] = 2] = "useProvidedOriginalAndGenerateDiff";
+})(Processes || (Processes = {}));
 function init() {
     for (let index in configParser_1.crawlerConfig.pages) {
         let page = configParser_1.crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}`;
-        if (configParser_1.crawlerConfig.originalData === null) {
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, beforePageUrl, true, page.elementsToTest, page.elementsToIgnore));
+        let currentProcess = Processes.getBothAndGenerateDiff;
+        if (configParser_1.crawlerConfig.originalData !== null)
+            currentProcess = Processes.useProvidedOriginalAndGenerateDiff;
+        if (configParser_1.crawlerConfig.getOriginal)
+            currentProcess = Processes.getOriginal;
+        let addPagePromiseToArray = function (isOriginal) {
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal ? beforePageUrl : afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
+        };
+        if (currentProcess === Processes.getBothAndGenerateDiff) {
+            addPagePromiseToArray(true);
+            addPagePromiseToArray(false);
         }
-        if (!configParser_1.crawlerConfig.getOriginal)
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, afterPageUrl, false, page.elementsToTest, page.elementsToIgnore));
+        if (currentProcess === Processes.useProvidedOriginalAndGenerateDiff) {
+            addPagePromiseToArray(false);
+        }
+        if (currentProcess === Processes.getOriginal) {
+            addPagePromiseToArray(true);
+        }
         Promise.all(beforeAndAfterPromises)
             .then((allResultsArray) => {
             if (configParser_1.crawlerConfig.getOriginal) {
-                generateRawOriginal(page);
+                parseRawOriginalAndSave(page);
             }
             else {
-                generateBothAndProcessDiff(page, allResultsArray);
+                parseBothGenerateDiffAndSave(page, allResultsArray);
             }
         }, (error) => {
             logging_1.logError(error);
@@ -75,7 +95,7 @@ exports.init = init;
  * @param page
  * @param allResultsArray
  */
-let generateBothAndProcessDiff = function (page, allResultsArray) {
+let parseBothGenerateDiffAndSave = function (page, allResultsArray) {
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
         diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -99,7 +119,7 @@ let generateBothAndProcessDiff = function (page, allResultsArray) {
  *
  * @param page
  */
-let generateRawOriginal = function (page) {
+let parseRawOriginalAndSave = function (page) {
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
@@ -139,6 +159,11 @@ let createDiffJson = function () {
 };
 let createOriginalJson = function () {
     return createJson((diffElement) => {
+        if (typeof diffElement.error !== "undefined") {
+            return {
+                error: diffElement.error
+            };
+        }
         return {
             selector: diffElement.selector,
             original: diffElement.original
