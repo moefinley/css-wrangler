@@ -59,13 +59,20 @@ function getComputedStylesForPage(
     return Promise.all(promiseArray);
 }
 
-enum Processes {
+enum Modes {
     "getOriginal",
     "getBothAndGenerateDiff",
     "useProvidedOriginalAndGenerateDiff"
 }
+function getCurrentMode() {
+    let currentMode: Modes = Modes.getBothAndGenerateDiff;
+    if (crawlerConfig.originalData !== null) currentMode = Modes.useProvidedOriginalAndGenerateDiff;
+    if (crawlerConfig.getOriginal) currentMode = Modes.getOriginal;
+    return currentMode;
+}
 
 export function init() {
+    let currentMode = getCurrentMode();
 
     for (let index in crawlerConfig.pages) {
         let page = crawlerConfig.pages[index];
@@ -73,23 +80,19 @@ export function init() {
         let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
 
-        let currentProcess:Processes = Processes.getBothAndGenerateDiff;
-        if(crawlerConfig.originalData !== null) currentProcess = Processes.useProvidedOriginalAndGenerateDiff;
-        if(crawlerConfig.getOriginal) currentProcess = Processes.getOriginal;
-
         let addPagePromiseToArray = function(isOriginal:boolean) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal?beforePageUrl:afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
         };
-        if(currentProcess === Processes.getBothAndGenerateDiff){
+        if(currentMode === Modes.getBothAndGenerateDiff){
             addPagePromiseToArray(true);
             addPagePromiseToArray(false);
         }
 
-        if(currentProcess === Processes.useProvidedOriginalAndGenerateDiff){
+        if(currentMode === Modes.useProvidedOriginalAndGenerateDiff){
             addPagePromiseToArray(false);
         }
 
-        if(currentProcess === Processes.getOriginal){
+        if(currentMode === Modes.getOriginal){
             addPagePromiseToArray(true);
         }
 

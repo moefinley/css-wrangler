@@ -45,34 +45,38 @@ function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, e
     }
     return Promise.all(promiseArray);
 }
-var Processes;
-(function (Processes) {
-    Processes[Processes["getOriginal"] = 0] = "getOriginal";
-    Processes[Processes["getBothAndGenerateDiff"] = 1] = "getBothAndGenerateDiff";
-    Processes[Processes["useProvidedOriginalAndGenerateDiff"] = 2] = "useProvidedOriginalAndGenerateDiff";
-})(Processes || (Processes = {}));
+var Modes;
+(function (Modes) {
+    Modes[Modes["getOriginal"] = 0] = "getOriginal";
+    Modes[Modes["getBothAndGenerateDiff"] = 1] = "getBothAndGenerateDiff";
+    Modes[Modes["useProvidedOriginalAndGenerateDiff"] = 2] = "useProvidedOriginalAndGenerateDiff";
+})(Modes || (Modes = {}));
+function getCurrentMode() {
+    let currentMode = Modes.getBothAndGenerateDiff;
+    if (configParser_1.crawlerConfig.originalData !== null)
+        currentMode = Modes.useProvidedOriginalAndGenerateDiff;
+    if (configParser_1.crawlerConfig.getOriginal)
+        currentMode = Modes.getOriginal;
+    return currentMode;
+}
 function init() {
+    let currentMode = getCurrentMode();
     for (let index in configParser_1.crawlerConfig.pages) {
         let page = configParser_1.crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}`;
         let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}`;
-        let currentProcess = Processes.getBothAndGenerateDiff;
-        if (configParser_1.crawlerConfig.originalData !== null)
-            currentProcess = Processes.useProvidedOriginalAndGenerateDiff;
-        if (configParser_1.crawlerConfig.getOriginal)
-            currentProcess = Processes.getOriginal;
         let addPagePromiseToArray = function (isOriginal) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal ? beforePageUrl : afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
         };
-        if (currentProcess === Processes.getBothAndGenerateDiff) {
+        if (currentMode === Modes.getBothAndGenerateDiff) {
             addPagePromiseToArray(true);
             addPagePromiseToArray(false);
         }
-        if (currentProcess === Processes.useProvidedOriginalAndGenerateDiff) {
+        if (currentMode === Modes.useProvidedOriginalAndGenerateDiff) {
             addPagePromiseToArray(false);
         }
-        if (currentProcess === Processes.getOriginal) {
+        if (currentMode === Modes.getOriginal) {
             addPagePromiseToArray(true);
         }
         Promise.all(beforeAndAfterPromises)
