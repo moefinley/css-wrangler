@@ -57,6 +57,7 @@ function getCurrentMode() {
         currentMode = Modes.useProvidedOriginalAndGenerateDiff;
     if (configParser_1.crawlerConfig.getOriginal)
         currentMode = Modes.getOriginal;
+    logging_1.logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
 }
 function init() {
@@ -81,11 +82,14 @@ function init() {
         }
         Promise.all(beforeAndAfterPromises)
             .then((allResultsArray) => {
-            if (configParser_1.crawlerConfig.getOriginal) {
+            if (currentMode === Modes.getOriginal) {
                 parseRawOriginalAndSave(page);
             }
+            else if (currentMode === Modes.useProvidedOriginalAndGenerateDiff) {
+                processComparandAndSaveDiff(page, allResultsArray);
+            }
             else {
-                parseBothGenerateDiffAndSave(page, allResultsArray);
+                processBothAndSaveDiff(page, allResultsArray);
             }
         }, (error) => {
             logging_1.logError(error);
@@ -94,12 +98,21 @@ function init() {
 }
 exports.init = init;
 /**
+ * When an original has been provided
+ *
+ * @param page
+ * @param allResultsArray
+ */
+let processComparandAndSaveDiff = function (page, allResultsArray) {
+    processBothAndSaveDiff(page, allResultsArray, false);
+};
+/**
  * The default action of scraping the original and comparand styles and generating a diff object from them.
  *
  * @param page
  * @param allResultsArray
  */
-let parseBothGenerateDiffAndSave = function (page, allResultsArray) {
+let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = true) {
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
         diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -112,7 +125,8 @@ let parseBothGenerateDiffAndSave = function (page, allResultsArray) {
     if (checkAllPagesProcessed()) {
         logging_1.logInfo('last page complete');
         writeToDisk(createDiffJson(), configParser_1.crawlerConfig.diffOutputPath);
-        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
+        if (writeOriginal)
+            writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
         writeToDisk(createComparandJson(), configParser_1.crawlerConfig.comparandOutputPath);
         unloadSelenium();
     }
@@ -127,6 +141,7 @@ let parseRawOriginalAndSave = function (page) {
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
+        unloadSelenium();
     }
 };
 let checkAllPagesProcessed = function () {

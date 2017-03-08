@@ -7,7 +7,7 @@ import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
 import {scrapeComputedStyles} from "./browserScript/scrapeComputedStyles";
-import {logInfo, logError} from "./logging/logging";
+import {logInfo, logError, logVerboseInfo} from "./logging/logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
 import diff = require("deep-diff");
@@ -68,6 +68,7 @@ function getCurrentMode() {
     let currentMode: Modes = Modes.getBothAndGenerateDiff;
     if (crawlerConfig.originalData !== null) currentMode = Modes.useProvidedOriginalAndGenerateDiff;
     if (crawlerConfig.getOriginal) currentMode = Modes.getOriginal;
+    logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
 }
 
@@ -98,10 +99,12 @@ export function init() {
 
         Promise.all(beforeAndAfterPromises)
             .then((allResultsArray) => {
-                if(crawlerConfig.getOriginal) {
+                if(currentMode === Modes.getOriginal) {
                     parseRawOriginalAndSave(page);
+                } else if(currentMode === Modes.useProvidedOriginalAndGenerateDiff){
+                    processComparandAndSaveDiff(page, allResultsArray);
                 } else {
-                    parseBothGenerateDiffAndSave(page, allResultsArray);
+                    processBothAndSaveDiff(page, allResultsArray);
                 }
         }, (error) => {
             logError(error);
@@ -110,12 +113,22 @@ export function init() {
 }
 
 /**
+ * When an original has been provided
+ *
+ * @param page
+ * @param allResultsArray
+ */
+let processComparandAndSaveDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][]){
+    processBothAndSaveDiff(page, allResultsArray, false);
+};
+
+/**
  * The default action of scraping the original and comparand styles and generating a diff object from them.
  *
  * @param page
  * @param allResultsArray
  */
-let parseBothGenerateDiffAndSave = function(page:pageInterface, allResultsArray:scrapedObjInterface[][]){
+let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][], writeOriginal:boolean = true){
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
         diffElement.diff = differ(diffElement.original, diffElement.comparand);
@@ -130,7 +143,7 @@ let parseBothGenerateDiffAndSave = function(page:pageInterface, allResultsArray:
     if (checkAllPagesProcessed()) {
         logInfo('last page complete');
         writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath);
-        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
+        if(writeOriginal) writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
         writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath);
         unloadSelenium();
     }
@@ -146,6 +159,7 @@ let parseRawOriginalAndSave = function(page:pageInterface):void{
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
+        unloadSelenium();
     }
 };
 

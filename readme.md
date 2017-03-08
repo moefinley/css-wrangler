@@ -74,7 +74,6 @@ file into the results.html
  
 ### Short term
  - Fix the xpath's missing slash
- - Browser doesn't close when using `--getOriginal`
  - Show the number of ignored elements on results page
  - Break down ComputedStyleTest.ts into separate concerns
  - Open the results page from a command
