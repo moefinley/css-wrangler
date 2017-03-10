@@ -2,6 +2,7 @@ import {mappingOptions} from "./mapping";
 import * as fileOps from "./fileOperations";
 import {PropertyNameFilter} from "./propertyFilter";
 import {PropertyAndValueFilter, valueType} from "./propertyAndValueFilter";
+import {AddPropertyAndValueFilterViewModel} from "./addPropertyAndValueFilterViewModel";
 
 let $fileInputModal = $('#fileInputModal');
 let $addPropertyAndValueFilter = $('#addPropertyAndValueFilterDialog');
@@ -32,24 +33,7 @@ class ViewModel {
         pages: ko.observableArray<pageInterface>([])
     };
     public propertyNameFilters = ko.observableArray<PropertyNameFilter>();
-    public propertyAndValueFilters = ko.observableArray<PropertyAndValueFilter>();
-    public addPropertyAndValueFilter = {
-        propertyName: ko.observable<string>(''),
-        valueName: ko.observable<string>(''),
-        valueType: ko.observable<valueType>(valueType.original),
-
-        add: ()=>{
-            this.propertyAndValueFilters.push(new PropertyAndValueFilter(
-                this.addPropertyAndValueFilter.propertyName(),
-                this.addPropertyAndValueFilter.valueName(),
-                this.addPropertyAndValueFilter.valueType(),
-                `Filter where ${this.addPropertyAndValueFilter.propertyName()} of ${this.addPropertyAndValueFilter.valueType()} is ${this.addPropertyAndValueFilter.valueName()}`
-            ))
-        },
-        openDialog: ()=>{
-            $addPropertyAndValueFilter.modal('show');
-        }
-    };
+    public addPropertyAndValueFilter = new AddPropertyAndValueFilterViewModel($addPropertyAndValueFilter);
 
     public pendingFilters = [];
 

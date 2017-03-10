@@ -1,4 +1,4 @@
-define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter", "./propertyAndValueFilter"], function (require, exports, mapping_1, fileOps, propertyFilter_1, propertyAndValueFilter_1) {
+define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter", "./addPropertyAndValueFilterViewModel"], function (require, exports, mapping_1, fileOps, propertyFilter_1, addPropertyAndValueFilterViewModel_1) {
     "use strict";
     let $fileInputModal = $('#fileInputModal');
     let $addPropertyAndValueFilter = $('#addPropertyAndValueFilterDialog');
@@ -28,18 +28,7 @@ define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter
                 pages: ko.observableArray([])
             };
             this.propertyNameFilters = ko.observableArray();
-            this.propertyAndValueFilters = ko.observableArray();
-            this.addPropertyAndValueFilter = {
-                propertyName: ko.observable(''),
-                valueName: ko.observable(''),
-                valueType: ko.observable(propertyAndValueFilter_1.valueType.original),
-                add: () => {
-                    this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.addPropertyAndValueFilter.propertyName(), this.addPropertyAndValueFilter.valueName(), this.addPropertyAndValueFilter.valueType(), `Filter where ${this.addPropertyAndValueFilter.propertyName()} of ${this.addPropertyAndValueFilter.valueType()} is ${this.addPropertyAndValueFilter.valueName()}`));
-                },
-                openDialog: () => {
-                    $addPropertyAndValueFilter.modal('show');
-                }
-            };
+            this.addPropertyAndValueFilter = new addPropertyAndValueFilterViewModel_1.AddPropertyAndValueFilterViewModel($addPropertyAndValueFilter);
             this.pendingFilters = [];
             this.convertedDate = ko.pureComputed(() => {
                 if (this.data.date() != 'loading...') {
