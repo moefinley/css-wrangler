@@ -1,12 +1,12 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
-    class Filter {
+    class PropertyNameFilter {
         constructor(property, name = property) {
             this.property = property;
             this.name = name;
             this.isSelected = ko.observable(true);
         }
     }
-    exports.Filter = Filter;
+    exports.PropertyNameFilter = PropertyNameFilter;
 });
-//# sourceMappingURL=filter.js.map
+//# sourceMappingURL=propertyFilter.js.map

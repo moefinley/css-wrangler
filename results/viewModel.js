@@ -1,6 +1,7 @@
-define(["require", "exports", "./mapping", "./fileOperations", "./filter"], function (require, exports, mapping_1, fileOps, filter_1) {
+define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter", "./propertyAndValueFilter"], function (require, exports, mapping_1, fileOps, propertyFilter_1, propertyAndValueFilter_1) {
     "use strict";
     let $fileInputModal = $('#fileInputModal');
+    let $addPropertyAndValueFilter = $('#addPropertyAndValueFilterDialog');
     $(function () {
         $fileInputModal.modal();
     });
@@ -16,7 +17,7 @@ define(["require", "exports", "./mapping", "./fileOperations", "./filter"], func
                      * Knockout doesn't like updating arrays while mapping
                      * So this...
                      */
-                    this.filters(this.filters().concat(this.pendingFilters));
+                    this.propertyNameFilters(this.propertyNameFilters().concat(this.pendingFilters));
                 });
             };
             this.data = {
@@ -26,7 +27,19 @@ define(["require", "exports", "./mapping", "./fileOperations", "./filter"], func
                 date: ko.observable('loading...'),
                 pages: ko.observableArray([])
             };
-            this.filters = ko.observableArray();
+            this.propertyNameFilters = ko.observableArray();
+            this.propertyAndValueFilters = ko.observableArray();
+            this.addPropertyAndValueFilter = {
+                propertyName: ko.observable(''),
+                valueName: ko.observable(''),
+                valueType: ko.observable(propertyAndValueFilter_1.valueType.original),
+                add: () => {
+                    this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.addPropertyAndValueFilter.propertyName(), this.addPropertyAndValueFilter.valueName(), this.addPropertyAndValueFilter.valueType(), `Filter where ${this.addPropertyAndValueFilter.propertyName()} of ${this.addPropertyAndValueFilter.valueType()} is ${this.addPropertyAndValueFilter.valueName()}`));
+                },
+                openDialog: () => {
+                    $addPropertyAndValueFilter.modal('show');
+                }
+            };
             this.pendingFilters = [];
             this.convertedDate = ko.pureComputed(() => {
                 if (this.data.date() != 'loading...') {
@@ -39,7 +52,7 @@ define(["require", "exports", "./mapping", "./fileOperations", "./filter"], func
         }
         addFilter(propertyName) {
             if (this.pendingFilters.findIndex(filter => filter.property === propertyName) === -1) {
-                this.pendingFilters.push(new filter_1.Filter(propertyName));
+                this.pendingFilters.push(new propertyFilter_1.PropertyNameFilter(propertyName));
             }
         }
         ;

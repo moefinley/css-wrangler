@@ -21,19 +21,55 @@
                 <h4 class="modal-title" id="myModalLabel">Modal title</h4>
             </div>
             <div class="modal-body">
-
                 <form id="jsonFile" name="jsonFile" enctype="multipart/form-data" method="post" class="form-inline">
-
                     <fieldset class="form-group">
                         <label for="fileinput">Select a JSON file</label>
                         <input type="file" id="fileinput">
                     </fieldset>
-
                 </form>
             </div>
             <div class="modal-footer">
                 <input type="button" id="btnLoad" value="Load" data-bind="click: loadFile"
                        class="btn btn-default" data-toggle="modal" data-target="fileInputModal">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="modal fade in" id="addPropertyAndValueFilterDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     data-show="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title">Modal title</h4>
+            </div>
+            <div class="modal-body">
+                <form id="addPropertyAndValueFilterForm" name="jsonFile" enctype="multipart/form-data" class="form-inline">
+                    <fieldset class="form-group">
+                        <label for="property">Property</label>
+                        <input type="text" name="property" id="property" data-bind="value: addPropertyAndValueFilter.propertyName">
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label for="value">Value</label>
+                        <input type="text" name="value" id="value" data-bind="value: addPropertyAndValueFilter.valueName">
+                    </fieldset>
+                    <fieldset class="form-group">
+                        <label class="checkbox-inline">
+                            <input type="radio" value="original" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <span>Original</span>
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="radio" value="comparand" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <span>Comparand</span>
+                        </label>
+                        <label class="checkbox-inline">
+                            <input type="radio" value="either" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <span>Either</span>
+                        </label>
+                    </fieldset>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" data-dismiss="modal"  data-bind="click: addPropertyAndValueFilter.add">Add</button>
             </div>
         </div>
     </div>
@@ -54,11 +90,24 @@
                     <dt>Date</dt>
                     <dd data-bind="text: convertedDate"></dd>
                 </dl>
-                <div class="well" data-bind="foreach: filters">
+                <div class="well">
+                    <h3>Property filters</h3>
+                    <!-- ko foreach: propertyNameFilters -->
                     <label class="checkbox-inline">
                         <input type="checkbox" data-bind="checked: isSelected">
                         <span data-bind="text: name"></span>
                     </label>
+                    <!-- /ko -->
+                </div>
+                <div class="well">
+                    <h3>Property and value filters</h3>
+                    <button data-bind="click: addPropertyAndValueFilter.openDialog">Add property and value filter +</button>
+                    <!-- ko foreach: propertyAndValueFilters -->
+                    <label class="checkbox-inline">
+                        <input type="checkbox" data-bind="checked: isSelected">
+                        <span data-bind="text: name"></span>
+                    </label>
+                    <!-- /ko -->
                 </div>
             </header>
             <article>
