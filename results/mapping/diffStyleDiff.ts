@@ -21,8 +21,8 @@ export class DiffStyleDiff extends DiffGenericDiff {
     }
 
     public isVisible = ko.computed<boolean>(():boolean=>{
-        let index = viewModel.filters().findIndex(e => e.property == this.styleProperty);
-        return index > -1 ? viewModel.filters()[index].isSelected() : true;
+        let index = viewModel.propertyNameFilters().findIndex(e => e.property == this.styleProperty);
+        return index > -1 ? viewModel.propertyNameFilters()[index].isSelected() : true;
     });
 
     private parseElementPath(rawPath:string[]){

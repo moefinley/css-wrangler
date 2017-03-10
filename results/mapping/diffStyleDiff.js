@@ -5,8 +5,8 @@ define(["require", "exports", "./diffGenericDiff", "../viewModel"], function (re
             super(deepDiffObj);
             this.deepDiffObj = deepDiffObj;
             this.isVisible = ko.computed(() => {
-                let index = viewModel_1.viewModel.filters().findIndex(e => e.property == this.styleProperty);
-                return index > -1 ? viewModel_1.viewModel.filters()[index].isSelected() : true;
+                let index = viewModel_1.viewModel.propertyNameFilters().findIndex(e => e.property == this.styleProperty);
+                return index > -1 ? viewModel_1.viewModel.propertyNameFilters()[index].isSelected() : true;
             });
             this.parseElementPath(deepDiffObj.path);
             if (this.xpath !== null) {
