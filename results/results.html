@@ -50,19 +50,19 @@
                     </fieldset>
                     <fieldset class="form-group">
                         <label for="value">Value</label>
-                        <input type="text" name="value" id="value" data-bind="value: addPropertyAndValueFilter.valueName">
+                        <input type="text" name="value" id="value" data-bind="value: addPropertyAndValueFilter.value">
                     </fieldset>
                     <fieldset class="form-group">
                         <label class="checkbox-inline">
-                            <input type="radio" value="original" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <input type="radio" value="original" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
                             <span>Original</span>
                         </label>
                         <label class="checkbox-inline">
-                            <input type="radio" value="comparand" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <input type="radio" value="comparand" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
                             <span>Comparand</span>
                         </label>
                         <label class="checkbox-inline">
-                            <input type="radio" value="either" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueType">
+                            <input type="radio" value="either" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
                             <span>Either</span>
                         </label>
                     </fieldset>
@@ -102,7 +102,7 @@
                 <div class="well">
                     <h3>Property and value filters</h3>
                     <button data-bind="click: addPropertyAndValueFilter.openDialog">Add property and value filter +</button>
-                    <!-- ko foreach: propertyAndValueFilters -->
+                    <!-- ko foreach: addPropertyAndValueFilter.propertyAndValueFilters -->
                     <label class="checkbox-inline">
                         <input type="checkbox" data-bind="checked: isSelected">
                         <span data-bind="text: name"></span>
