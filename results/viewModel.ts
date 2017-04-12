@@ -38,7 +38,7 @@ class ViewModel {
     public pendingFilters = [];
 
     public addFilter(propertyName:string) {
-        if(this.pendingFilters.findIndex(filter => filter.property === propertyName) === -1){
+        if(this.pendingFilters.findIndex(filter => filter.propertyName === propertyName) === -1){
             this.pendingFilters.push(new PropertyNameFilter(propertyName));
         }
     };
