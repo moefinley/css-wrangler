@@ -34,7 +34,7 @@ function getComputedStylesForPage(
     isOriginal:boolean,
     elementsToScrape: diffElementInterface[],
     elementsToIgnore:string[]
-):Promise<Promise<scrapedObjInterface[]>> {
+):Promise<scrapedObjInterface[]> {
     let promiseArray:promise.Promise<scrapedObjInterface>[] = [];
 
     driver.get(url);
