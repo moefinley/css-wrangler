@@ -5,4 +5,7 @@ export class PropertyNameFilter {
         public name:string = property
     ){
     }
+    public isMatch(styleProperty:string){
+        return styleProperty === this.property;
+    }
 }

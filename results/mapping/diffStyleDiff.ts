@@ -23,29 +23,15 @@ export class DiffStyleDiff extends DiffGenericDiff {
     }
 
     public isVisible = ko.computed<boolean>(():boolean=>{
-        let index = viewModel.propertyNameFilters().findIndex(e => e.property == this.styleProperty);
-        let isVisible = index > -1 ? viewModel.propertyNameFilters()[index].isSelected() : true;
+        let isVisible = true;
+        viewModel.propertyNameFilters()
+            .filter(f => !f.isSelected())
+            .forEach(f => f.isMatch(this.styleProperty) ? isVisible = false: null);
 
         if(isVisible) {
-            let pavFilterIndex = viewModel.addPropertyAndValueFilter.propertyAndValueFilters().findIndex((filter) => {
-                let doesValueMatch: boolean = false;
-                let doesPropertyMatch: boolean = false;
-                if (filter.valueType !== valueType.either) {
-                    let relevantValue = filter.valueType === valueType.original ? this.lhs : this.rhs;
-                    if (relevantValue === filter.value) doesValueMatch = true;
-                } else {
-                    //TODO: Do something for either
-                }
-
-                if (filter.property === this.styleProperty) doesPropertyMatch = true;
-
-
-                return doesValueMatch && doesPropertyMatch;
-            });
-            if(pavFilterIndex > -1) {
-                logVerboseInfo('Found match to property and value filter');
-                isVisible = false;
-            }
+            viewModel.addPropertyAndValueFilter.propertyAndValueFilters()
+                .filter(f => !f.isSelected())
+                .forEach(f => f.isMatch(this.styleProperty, this.lhs, this.rhs) ? isVisible = false: null);
         }
         return isVisible;
     });
