@@ -1,5 +1,6 @@
 define(["require", "exports", "./propertyAndValueFilter"], function (require, exports, propertyAndValueFilter_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class AddPropertyAndValueFilterViewModel {
         constructor($addPropertyAndValueFilter) {
             this.$addPropertyAndValueFilter = $addPropertyAndValueFilter;

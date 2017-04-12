@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 /*
  * This JavaScript get executed in the browser under test and not Node
  * Therefore it should remain as cross compatible as possible

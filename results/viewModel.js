@@ -1,5 +1,6 @@
 define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter", "./addPropertyAndValueFilterViewModel"], function (require, exports, mapping_1, fileOps, propertyFilter_1, addPropertyAndValueFilterViewModel_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     let $fileInputModal = $('#fileInputModal');
     let $addPropertyAndValueFilter = $('#addPropertyAndValueFilterDialog');
     $(function () {
@@ -40,7 +41,7 @@ define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter
             });
         }
         addFilter(propertyName) {
-            if (this.pendingFilters.findIndex(filter => filter.property === propertyName) === -1) {
+            if (this.pendingFilters.findIndex(filter => filter.propertyName === propertyName) === -1) {
                 this.pendingFilters.push(new propertyFilter_1.PropertyNameFilter(propertyName));
             }
         }

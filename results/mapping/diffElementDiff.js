@@ -1,5 +1,6 @@
 define(["require", "exports", "./diffGenericDiff"], function (require, exports, diffGenericDiff_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class DiffElementDiff extends diffGenericDiff_1.DiffGenericDiff {
         constructor(deepDiffObj) {
             super(deepDiffObj);

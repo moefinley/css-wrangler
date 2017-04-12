@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Page {
     constructor(id, name, url, elementsToTest, elementsToIgnore) {
         this.id = id;
