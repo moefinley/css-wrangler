@@ -1,25 +1,28 @@
 export class PropertyAndValueFilter {
     public isSelected = ko.observable<boolean>(true);
+    private propertyNameRegExp:RegExp;
+    private propertyValueRegExp:RegExp;
     constructor(
         public propertyName:string,
         public propertyValue:string,
         public valueType: valueType,
         public name:string = propertyName
     ){
-
+        this.propertyNameRegExp = new RegExp(propertyName);
+        this.propertyValueRegExp = new RegExp(propertyValue);
     }
     public isMatch(
         stylePropertyName:string,
         stylePropertyOriginalValue:string,
         stylePropertyComparandValue: string
     ){
-        return stylePropertyName === this.propertyName ? this.doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
+        return this.propertyNameRegExp.test(stylePropertyName) ? this.doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
     }
 
     private doesPropertyMatch(stylePropertyOriginalValue: string, stylePropertyComparandValue: string) {
-        let originalMatch = stylePropertyOriginalValue === this.propertyValue;
-        let comparandMatch = stylePropertyComparandValue === this.propertyValue;
-        let eitherMatch = stylePropertyOriginalValue === this.propertyValue || stylePropertyComparandValue === this.propertyValue;
+        let originalMatch = this.propertyValueRegExp.test(stylePropertyOriginalValue);
+        let comparandMatch = this.propertyValueRegExp.test(stylePropertyComparandValue);
+        let eitherMatch = originalMatch || comparandMatch;
 
         switch (this.valueType) {
             case valueType.original:

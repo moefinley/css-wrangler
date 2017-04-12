@@ -8,14 +8,16 @@ define(["require", "exports"], function (require, exports) {
             this.valueType = valueType;
             this.name = name;
             this.isSelected = ko.observable(true);
+            this.propertyNameRegExp = new RegExp(propertyName);
+            this.propertyValueRegExp = new RegExp(propertyValue);
         }
         isMatch(stylePropertyName, stylePropertyOriginalValue, stylePropertyComparandValue) {
-            return stylePropertyName === this.propertyName ? this.doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
+            return this.propertyNameRegExp.test(stylePropertyName) ? this.doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
         }
         doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) {
-            let originalMatch = stylePropertyOriginalValue === this.propertyValue;
-            let comparandMatch = stylePropertyComparandValue === this.propertyValue;
-            let eitherMatch = stylePropertyOriginalValue === this.propertyValue || stylePropertyComparandValue === this.propertyValue;
+            let originalMatch = this.propertyValueRegExp.test(stylePropertyOriginalValue);
+            let comparandMatch = this.propertyValueRegExp.test(stylePropertyComparandValue);
+            let eitherMatch = originalMatch || comparandMatch;
             switch (this.valueType) {
                 case valueType.original:
                     return originalMatch;
