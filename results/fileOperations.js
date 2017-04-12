@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     function loadFile(inputElementId, callback) {
         var input, file, fr;
         if (typeof window.FileReader !== 'function') {

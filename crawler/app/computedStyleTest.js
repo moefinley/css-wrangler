@@ -1,5 +1,6 @@
 "use strict";
-const configParser_1 = require('./configParser');
+Object.defineProperty(exports, "__esModule", { value: true });
+const configParser_1 = require("./configParser");
 const fs = require("fs");
 const deepDiff = require("deep-diff");
 const webdriver = require("selenium-webdriver");

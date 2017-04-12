@@ -1,5 +1,6 @@
 define(["require", "exports", "../mapping"], function (require, exports, mapping_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class Page {
         constructor(data) {
             this.elementsToTest = [];

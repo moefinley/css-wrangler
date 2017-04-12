@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const url = require("url");
 exports.cleanDiffElement = function (diffElement) {
     if (typeof diffElement.diff !== 'undefined') {

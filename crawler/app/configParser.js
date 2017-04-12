@@ -1,7 +1,8 @@
 "use strict";
-const nopt = require('nopt');
-const path = require('path');
-const fs = require('fs');
+Object.defineProperty(exports, "__esModule", { value: true });
+const nopt = require("nopt");
+const path = require("path");
+const fs = require("fs");
 const Page_1 = require("./Page");
 const diffElement_1 = require("./diffElement");
 class CrawlerConfig {

@@ -1,5 +1,6 @@
 define(["require", "exports", "./diffElementDiff", "./diffStyleDiff"], function (require, exports, diffElementDiff_1, diffStyleDiff_1) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     class DiffElement {
         constructor(selector, elementDiffs = [], styleDiffs = []) {
             this.selector = selector;

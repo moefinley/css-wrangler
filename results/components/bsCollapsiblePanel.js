@@ -1,5 +1,6 @@
 define(["require", "exports"], function (require, exports) {
     "use strict";
+    Object.defineProperty(exports, "__esModule", { value: true });
     exports.template = `
     <div class="panel panel-default">
         <div class="panel-heading" role="tab" data-bind="attr: {href: 'heading' + id}">
