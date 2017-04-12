@@ -7,7 +7,7 @@ define(["require", "exports"], function (require, exports) {
             this.propertyValue = propertyValue;
             this.valueType = valueType;
             this.name = name;
-            this.isSelected = ko.observable(true);
+            this.isSelected = ko.observable(false);
             this.propertyNameRegExp = new RegExp(propertyName);
             this.propertyValueRegExp = new RegExp(propertyValue);
         }

@@ -40,32 +40,40 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h4 class="modal-title">Modal title</h4>
+                <h4 class="modal-title">Add property and value filter</h4>
             </div>
             <div class="modal-body">
-                <form id="addPropertyAndValueFilterForm" name="jsonFile" enctype="multipart/form-data" class="form-inline">
-                    <fieldset class="form-group">
-                        <label for="property">Property</label>
-                        <input type="text" name="property" id="property" data-bind="value: addPropertyAndValueFilter.propertyName">
-                    </fieldset>
-                    <fieldset class="form-group">
-                        <label for="value">Value</label>
-                        <input type="text" name="value" id="value" data-bind="value: addPropertyAndValueFilter.value">
-                    </fieldset>
-                    <fieldset class="form-group">
-                        <label class="checkbox-inline">
-                            <input type="radio" value="original" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
-                            <span>Original</span>
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="radio" value="comparand" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
-                            <span>Comparand</span>
-                        </label>
-                        <label class="checkbox-inline">
-                            <input type="radio" value="either" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
-                            <span>Either</span>
-                        </label>
-                    </fieldset>
+                <form id="addPropertyAndValueFilterForm" name="jsonFile" enctype="multipart/form-data">
+                    <div class="form">
+                        <fieldset class="form-group">
+                            <label for="property">Property:</label>
+                            <input type="text" name="property" id="property" class="form-control" data-bind="value: addPropertyAndValueFilter.propertyName">
+                        </fieldset>
+                        <fieldset class="form-group">
+                            <label for="value">Value:</label>
+                            <input type="text" name="value" id="value" class="form-control" data-bind="value: addPropertyAndValueFilter.value">
+                        </fieldset>
+                        <small>Property and Value can be regular expressions</small>
+                        <br/>
+                        <br/>
+                    </div>
+                    <div class="form-inline">
+                        <fieldset class="form-group">
+                            <legend>Value type:</legend>
+                            <label class="checkbox-inline">
+                                <input type="radio" value="original" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
+                                <span>Original</span>
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="radio" value="comparand" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
+                                <span>Comparand</span>
+                            </label>
+                            <label class="checkbox-inline">
+                                <input type="radio" value="either" name="valueType" data-bind="checked: addPropertyAndValueFilter.valueTypeString">
+                                <span>Either</span>
+                            </label>
+                        </fieldset>
+                    </div>
                 </form>
             </div>
             <div class="modal-footer">
@@ -92,22 +100,30 @@
                 </dl>
                 <div class="well">
                     <h3>Property filters</h3>
-                    <!-- ko foreach: propertyNameFilters -->
-                    <label class="checkbox-inline">
-                        <input type="checkbox" data-bind="checked: isSelected">
-                        <span data-bind="text: name"></span>
-                    </label>
-                    <!-- /ko -->
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <!-- ko foreach: propertyNameFilters -->
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: isSelected">
+                                <span data-bind="text: name"></span>
+                            </label>
+                            <!-- /ko -->
+                        </div>
+                    </div>
                 </div>
-                <div class="well">
+                <div id="propertyAndValueFilters" class="well">
                     <h3>Property and value filters</h3>
-                    <button data-bind="click: addPropertyAndValueFilter.openDialog">Add property and value filter +</button>
-                    <!-- ko foreach: addPropertyAndValueFilter.propertyAndValueFilters -->
-                    <label class="checkbox-inline">
-                        <input type="checkbox" data-bind="checked: isSelected">
-                        <span data-bind="text: name"></span>
-                    </label>
-                    <!-- /ko -->
+                    <div class="form-inline">
+                        <div class="form-group">
+                            <button class="btn btn-default" data-bind="click: addPropertyAndValueFilter.openDialog">Add property and value filter +</button>
+                            <!-- ko foreach: addPropertyAndValueFilter.propertyAndValueFilters -->
+                            <label class="checkbox-inline">
+                                <input type="checkbox" data-bind="checked: isSelected">
+                                <span data-bind="html: name"></span>
+                            </label>
+                            <!-- /ko -->
+                        </div>
+                    </div>
                 </div>
             </header>
             <article>

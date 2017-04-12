@@ -1,5 +1,5 @@
 export class PropertyAndValueFilter {
-    public isSelected = ko.observable<boolean>(true);
+    public isSelected = ko.observable<boolean>(false);
     private propertyNameRegExp:RegExp;
     private propertyValueRegExp:RegExp;
     constructor(
