@@ -9,7 +9,7 @@ define(["require", "exports", "./propertyAndValueFilter"], function (require, ex
             this.valueTypeString = ko.observable('');
             this.propertyAndValueFilters = ko.observableArray();
             this.add = () => {
-                this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.propertyName(), this.value(), this.valueType(), `Filter where ${this.propertyName()} of ${this.valueTypeString()} is ${this.value()}`));
+                this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.propertyName(), this.value(), this.valueType(), `Filter where <mark>${this.propertyName()}</mark> of <mark>${this.valueTypeString()}</mark> is ${this.value()}`));
             };
             this.openDialog = () => {
                 this.$addPropertyAndValueFilter.modal('show');

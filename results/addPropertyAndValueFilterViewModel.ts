@@ -10,7 +10,7 @@ export class AddPropertyAndValueFilterViewModel{
             this.propertyName(),
             this.value(),
             this.valueType(),
-            `Filter where ${this.propertyName()} of ${this.valueTypeString()} is ${this.value()}`
+            `Filter where <mark>${this.propertyName()}</mark> of <mark>${this.valueTypeString()}</mark> is ${this.value()}`
         ));
     };
     public openDialog = ()=>{
