@@ -5,11 +5,13 @@ define(["require", "exports", "./propertyAndValueFilter"], function (require, ex
         constructor($addPropertyAndValueFilter) {
             this.$addPropertyAndValueFilter = $addPropertyAndValueFilter;
             this.propertyName = ko.observable('');
+            this.isPropertyNameRegExp = ko.observable();
             this.value = ko.observable('');
+            this.isValueRegExp = ko.observable();
             this.valueTypeString = ko.observable('');
             this.propertyAndValueFilters = ko.observableArray();
             this.add = () => {
-                this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.propertyName(), this.value(), this.valueType(), `Filter where <mark>${this.propertyName()}</mark> of <mark>${this.valueTypeString()}</mark> is ${this.value()}`));
+                this.propertyAndValueFilters.push(new propertyAndValueFilter_1.PropertyAndValueFilter(this.propertyName(), this.isPropertyNameRegExp() == "true", this.value(), this.isValueRegExp() == "true", this.valueType(), `Filter where <mark>${this.propertyName()}</mark> of <mark>${this.valueTypeString()}</mark> is ${this.value()}`));
             };
             this.openDialog = () => {
                 this.$addPropertyAndValueFilter.modal('show');

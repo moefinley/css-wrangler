@@ -2,13 +2,13 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class PropertyNameFilter {
-        constructor(property, name = property) {
-            this.property = property;
+        constructor(propertyName, name = propertyName) {
+            this.propertyName = propertyName;
             this.name = name;
             this.isSelected = ko.observable(true);
         }
         isMatch(styleProperty) {
-            return styleProperty === this.property;
+            return styleProperty === this.propertyName;
         }
     }
     exports.PropertyNameFilter = PropertyNameFilter;

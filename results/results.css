@@ -9,6 +9,8 @@
   border-radius: 10px;
   padding: 0.4em 0.8em .3em; }
 
+#addPropertyAndValueFilterForm label {
+  min-width: 72px; }
 #addPropertyAndValueFilterForm legend {
   font-size: 14px;
   font-weight: 700;
