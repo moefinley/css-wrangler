@@ -1,22 +1,42 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "logging"], function (require, exports, logging_1) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     class PropertyAndValueFilter {
-        constructor(propertyName, propertyValue, valueType, name = propertyName) {
+        constructor(propertyName, propertyNameIsRegExp, propertyValue, propertyValueIsRegExp, valueType, name = propertyName.toString()) {
             this.propertyName = propertyName;
+            this.propertyNameIsRegExp = propertyNameIsRegExp;
             this.propertyValue = propertyValue;
+            this.propertyValueIsRegExp = propertyValueIsRegExp;
             this.valueType = valueType;
             this.name = name;
             this.isSelected = ko.observable(false);
-            this.propertyNameRegExp = new RegExp(propertyName);
-            this.propertyValueRegExp = new RegExp(propertyValue);
+            this.propertyNameRegExp = null;
+            this.propertyValueRegExp = null;
+            if (propertyNameIsRegExp)
+                this.propertyNameRegExp = PropertyAndValueFilter.createNewRegExp(propertyName);
+            if (propertyValueIsRegExp)
+                this.propertyValueRegExp = PropertyAndValueFilter.createNewRegExp(propertyValue);
+        }
+        static createNewRegExp(regExpString) {
+            let regExp;
+            try {
+                regExp = new RegExp(regExpString);
+            }
+            catch (e) {
+                regExp = new RegExp("");
+                logging_1.logError("not a valid regular expression");
+            }
+            return regExp;
         }
         isMatch(stylePropertyName, stylePropertyOriginalValue, stylePropertyComparandValue) {
-            return this.propertyNameRegExp.test(stylePropertyName) ? this.doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
+            return this.doesPropertyNameMatch(stylePropertyName) ? this.doesPropertyValueMatch(stylePropertyOriginalValue, stylePropertyComparandValue) : false;
         }
-        doesPropertyMatch(stylePropertyOriginalValue, stylePropertyComparandValue) {
-            let originalMatch = this.propertyValueRegExp.test(stylePropertyOriginalValue);
-            let comparandMatch = this.propertyValueRegExp.test(stylePropertyComparandValue);
+        doesPropertyNameMatch(stylePropertyName) {
+            return this.propertyNameIsRegExp ? this.propertyNameRegExp.test(stylePropertyName) : this.propertyName === stylePropertyName;
+        }
+        doesPropertyValueMatch(stylePropertyOriginalValue, stylePropertyComparandValue) {
+            let originalMatch = this.propertyValueIsRegExp ? this.propertyValueRegExp.test(stylePropertyOriginalValue) : this.propertyValue === stylePropertyOriginalValue;
+            let comparandMatch = this.propertyValueIsRegExp ? this.propertyValueRegExp.test(stylePropertyComparandValue) : this.propertyValue === stylePropertyComparandValue;
             let eitherMatch = originalMatch || comparandMatch;
             switch (this.valueType) {
                 case valueType.original:

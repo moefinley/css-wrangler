@@ -1,7 +1,5 @@
 import {DiffGenericDiff} from "./diffGenericDiff";
 import {viewModel} from "../viewModel";
-import {valueType} from "../propertyAndValueFilter";
-import {logVerboseInfo} from "../../crawler/app/logging/logging";
 export class DiffStyleDiff extends DiffGenericDiff {
     public path: string;
     public friendlyPath: string;
