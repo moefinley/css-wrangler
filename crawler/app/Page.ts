@@ -7,7 +7,7 @@ export class Page implements pageInterface{
         public name: string,
         public url:string,
         public elementsToTest:DiffElement[],
-        elementsToIgnore:string[]
+        elementsToIgnore?:string[]
     ){
         if(Array.isArray(elementsToIgnore) && elementsToIgnore.length > 0) this.elementsToIgnore = elementsToIgnore;
     }
