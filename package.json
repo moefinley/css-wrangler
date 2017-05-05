@@ -4,7 +4,7 @@
   "description": "Computed styles scraping and reporting",
   "main": "Crawler/App.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "./node_modules/.bin/mocha --ui tdd --reporter spec  --recursive ./tests/crawler/unit",
     "startTestServer": "http-server Tests/TestSites/"
   },
   "repository": {
@@ -27,12 +27,16 @@
   "homepage": "https://github.com/moefinley/css-wrangler#readme",
   "devDependencies": {
     "@types/bootstrap": "^3.3.32",
+    "@types/chai": "^3.5.2",
     "@types/deep-diff": "0.0.30",
     "@types/jquery": "^2.0.40",
     "@types/knockout": "^3.4.39",
     "@types/knockout.mapping": "^2.0.28",
+    "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.5",
-    "@types/selenium-webdriver": "^2.53.39"
+    "@types/selenium-webdriver": "^2.53.39",
+    "chai": "^3.5.0",
+    "mocha": "^3.3.0"
   },
   "dependencies": {
     "@types/escape-string-regexp": "0.0.30",
