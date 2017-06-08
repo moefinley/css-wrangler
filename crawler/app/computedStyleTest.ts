@@ -78,8 +78,8 @@ export function init() {
     for (let index in crawlerConfig.pages) {
         let page = crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}`;
-        let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}`;
+        let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}${crawlerConfig.beforeQueryString}`;
+        let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}${crawlerConfig.afterQueryString}`;
 
         let addPagePromiseToArray = function(isOriginal:boolean) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal?beforePageUrl:afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));

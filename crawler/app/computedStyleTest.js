@@ -66,8 +66,8 @@ function init() {
     for (let index in configParser_1.crawlerConfig.pages) {
         let page = configParser_1.crawlerConfig.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}`;
-        let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}`;
+        let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}${configParser_1.crawlerConfig.beforeQueryString}`;
+        let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}${configParser_1.crawlerConfig.afterQueryString}`;
         let addPagePromiseToArray = function (isOriginal) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal ? beforePageUrl : afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
         };

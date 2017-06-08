@@ -7,6 +7,10 @@
 </head>
 <body>
 <h1>This is a test site</h1>
+<div id="loginForm">
+    <input type="text" name="userName" id="userName">
+    <button id="loginButton"></button>
+</div>
 <p id="paragraphElement">
     This is a test paragraph with some text
     <span class="ignore-me">I should be ignored</span>
@@ -18,5 +22,10 @@
     <li>test list item</li>
     <li>test list item</li>
 </ul>
+<script>
+    document.getElementById('loginButton').addEventListener('click', function(){
+        console.log('Login!!!!!');
+    })
+</script>
 </body>
 </html>

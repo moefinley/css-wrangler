@@ -70,4 +70,4 @@ suite('cleanDiffElement function', () => {
         expect(testDiffElement.diff).to.have.lengthOf(1);
     });
 });
-//# sourceMappingURL=CleanDiffElement.js.map
+//# sourceMappingURL=cleanDiffElement.js.map
