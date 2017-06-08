@@ -3,13 +3,22 @@ const sharedElementsToTest = ['h1', '#paragraphElement', '#listElement'];
 exports.crawlerConfig = {
     beforeUrl: "127.0.0.1:8080/a",
     afterUrl: "127.0.0.1:8080/b",
+    beforeQueryString: "?beforeQuery=true",
+    afterQueryString: "?afterQuery=true",
     pages: [
         {
             id: 'home',
             name: 'Home page',
             path: '/home.html',
             elementsToTest: sharedElementsToTest,
-            elementsToIgnore: ['.ignore-me']
+            elementsToIgnore: ['.ignore-me'],
+            states: {
+                login: function(driver){
+                    driver.findElement(By.id('loginButton')).then(function(loginButton){
+                        loginButton.click();
+                    })
+                }
+            }
         },
         {
             id: 'about',

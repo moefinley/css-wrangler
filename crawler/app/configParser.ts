@@ -17,6 +17,8 @@ interface IPageExtConfig {
 interface ICrawlerExtConfig {
     beforeUrl: string;
     afterUrl: string;
+    beforeQueryString: string;
+    afterQueryString: string;
     pages: IPageExtConfig[];
     outputPath: string;
 }
@@ -43,6 +45,8 @@ class CrawlerConfig implements ICrawlerInternalConfig {
     beforeUrl: string;
     afterUrl: string;
     pages: Page[] = [];
+    beforeQueryString: string;
+    afterQueryString: string;
     constructor(
         public configFile: string,
         public getOriginal: boolean,
@@ -52,6 +56,8 @@ class CrawlerConfig implements ICrawlerInternalConfig {
         this.originalData = originalData;
         this.beforeUrl = rawConfig.beforeUrl;
         this.afterUrl = rawConfig.afterUrl;
+        this.beforeQueryString = rawConfig.beforeQueryString;
+        this.afterQueryString = rawConfig.afterQueryString;
         let outputPath = path.parse(rawConfig.outputPath);
         this.diffOutputPath = path.normalize(rawConfig.outputPath);
         this.originalOutputPath = path.join(outputPath.dir, outputPath.name + "-original" + outputPath.ext);

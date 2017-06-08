@@ -8,7 +8,6 @@ define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter
     });
     class ViewModel {
         constructor() {
-            //let self = this;
             this.loadFile = () => {
                 fileOps.loadFile('fileinput', (e) => {
                     $fileInputModal.modal('hide');
@@ -31,14 +30,15 @@ define(["require", "exports", "./mapping", "./fileOperations", "./propertyFilter
             this.propertyNameFilters = ko.observableArray();
             this.addPropertyAndValueFilter = new addPropertyAndValueFilterViewModel_1.AddPropertyAndValueFilterViewModel($addPropertyAndValueFilter);
             this.pendingFilters = [];
-            this.convertedDate = ko.pureComputed(() => {
+            this.convertDate = () => {
                 if (this.data.date() != 'loading...') {
                     return new Date(this.data.date()).toString();
                 }
                 else {
                     return this.data.date();
                 }
-            });
+            };
+            this.convertedDate = ko.pureComputed(this.convertDate);
         }
         addFilter(propertyName) {
             if (this.pendingFilters.findIndex(filter => filter.propertyName === propertyName) === -1) {

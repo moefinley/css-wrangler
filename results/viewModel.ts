@@ -10,8 +10,6 @@ $(function(){
     $fileInputModal.modal();
 });
 class ViewModel {
-    //let self = this;
-
     public loadFile = ()=>{
         fileOps.loadFile('fileinput', (e)=>{
         $fileInputModal.modal('hide');
@@ -42,13 +40,14 @@ class ViewModel {
             this.pendingFilters.push(new PropertyNameFilter(propertyName));
         }
     };
-    public convertedDate = ko.pureComputed(() => {
+    private convertDate = ()=>{
         if (this.data.date() != 'loading...') {
             return new Date(this.data.date()).toString();
         } else {
             return this.data.date();
         }
-    });
+    };
+    public convertedDate = ko.pureComputed(this.convertDate);
 }
 
 export let viewModel = new ViewModel();
