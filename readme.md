@@ -17,7 +17,9 @@ The difference can then be viewed through Results/Results.html
 ## Running the Crawler
 To run crawler use the following command
 
-```node Crawler\App.js --config your-config-file.js```
+```node crawler\bin\css-crawler --config your-config-file.js```
+
+make sure you have Selenium Driver and its location in your path
 
 The config file is a CommonJS module exporting a variable called ```crawlerConfig```
 
