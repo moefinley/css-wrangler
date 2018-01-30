@@ -11,6 +11,7 @@ import {logInfo, logError, logVerboseInfo} from "./logging/logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
 import diff = require("deep-diff");
+import IThenable = promise.IThenable;
 const differ = deepDiff.diff;
 
 
@@ -35,11 +36,11 @@ function getComputedStylesForPage(
     elementsToScrape: diffElementInterface[],
     elementsToIgnore:string[]
 ):Promise<scrapedObjInterface[]> {
-    let promiseArray:promise.Promise<scrapedObjInterface>[] = [];
+    let promiseArray:IThenable<scrapedObjInterface>[] = [];
 
     driver.get(url);
     for (let diffElement of elementsToScrape) {
-        promiseArray.push(driver.executeScript<scrapedObjInterface>(scrapeComputedStyles, diffElement.selector, elementsToIgnore)
+        promiseArray.push(<IThenable<scrapedObjInterface>>driver.executeScript<scrapedObjInterface>(scrapeComputedStyles, diffElement.selector, elementsToIgnore)
             .then((resultsOfScraping):scrapedObjInterface => {
             if(typeof resultsOfScraping.error !== "undefined"){
                 logError(resultsOfScraping.error + ' on page ' + pageName);
@@ -56,7 +57,7 @@ function getComputedStylesForPage(
             }
         }));
     }
-    return Promise.all(promiseArray);
+    return Promise.all<scrapedObjInterface>(<PromiseLike<scrapedObjInterface>[]>promiseArray);
 }
 
 enum Modes {

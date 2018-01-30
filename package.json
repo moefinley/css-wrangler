@@ -2,7 +2,7 @@
   "name": "css-wrangler",
   "version": "0.9.3",
   "description": "Computed styles scraping and reporting",
-  "main": "Crawler/App.js",
+  "main": "crawler/bin/css-crawler",
   "scripts": {
     "test": "./node_modules/.bin/mocha --ui tdd --reporter spec  --recursive ./tests/crawler/unit",
     "startTestServer": "http-server Tests/TestSites/",
@@ -23,7 +23,7 @@
     "url": "https://github.com/moefinley/css-wrangler/issues"
   },
   "bin": {
-    "css-wrangler": "./Crawler/bin/css-crawler"
+    "css-wrangler": "./crawler/bin/css-crawler"
   },
   "homepage": "https://github.com/moefinley/css-wrangler#readme",
   "devDependencies": {
@@ -35,7 +35,7 @@
     "@types/knockout.mapping": "^2.0.28",
     "@types/mocha": "^2.2.41",
     "@types/node": "^7.0.5",
-    "@types/selenium-webdriver": "^2.53.39",
+    "@types/selenium-webdriver": "^2.53.43",
     "chai": "^3.5.0",
     "karma": "^1.7.0",
     "karma-chai": "^0.1.0",
@@ -51,6 +51,6 @@
     "deep-diff": "latest",
     "escape-string-regexp": "^1.0.5",
     "nopt": "^4.0.1",
-    "selenium-webdriver": "^3.0.1"
+    "selenium-webdriver": "^3.6.0"
   }
 }

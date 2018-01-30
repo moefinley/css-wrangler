@@ -93,3 +93,6 @@ jspm_packages
 .yarn-integrity
 
 
+/tests/test-comparand.json
+/tests/test-original.json
+/tests/test.json
