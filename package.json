@@ -1,6 +1,6 @@
 {
   "name": "css-wrangler",
-  "version": "0.9.3",
+  "version": "0.10.0",
   "description": "Computed styles scraping and reporting",
   "main": "crawler/bin/css-crawler",
   "scripts": {
