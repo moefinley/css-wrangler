@@ -116,8 +116,10 @@ let processComparandAndSaveDiff = function (page, allResultsArray) {
 let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = true) {
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
-        diffElement.diff = differ(diffElement.original, diffElement.comparand);
-        CleanDiffElement_1.cleanDiffElement(diffElement);
+        if (typeof diffElement.error !== "undefined") {
+            diffElement.diff = differ(diffElement.original, diffElement.comparand);
+            CleanDiffElement_1.cleanDiffElement(diffElement);
+        }
     }
     page.elementsToTest = page.elementsToTest.filter((diffElement) => {
         return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
