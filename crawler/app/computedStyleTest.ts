@@ -132,8 +132,10 @@ let processComparandAndSaveDiff = function(page:pageInterface, allResultsArray:s
 let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][], writeOriginal:boolean = true){
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
-        diffElement.diff = differ(diffElement.original, diffElement.comparand);
-        cleanDiffElement(diffElement);
+        if(typeof diffElement.error !== "undefined"){
+            diffElement.diff = differ(diffElement.original, diffElement.comparand);
+            cleanDiffElement(diffElement);
+        }
     }
 
     page.elementsToTest = page.elementsToTest.filter((diffElement) => {
