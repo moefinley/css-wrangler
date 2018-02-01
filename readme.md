@@ -82,6 +82,7 @@ file into the results.html
  - Improve logging (Standard log, verbose log, error log and switches)
  - Find a cross browser replacement for document.querySelector() without effecting the page so results can be gathered from IE8
  - On the results page add a checkbox next to each difference allowing property/value combinations to be ignored for the Original, Comparand or both. 
+ - Replace vanilla webdriver with BrowserTime https://www.npmjs.com/package/browsertime
 
 ### Medium term
  - Allow the gathering of a/b computed styles and the comparision to happen at separate times
