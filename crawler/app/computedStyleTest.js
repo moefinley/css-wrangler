@@ -21,28 +21,35 @@ function unloadSelenium() {
     driver.manage().logs().get("browser").then(entry => entry.forEach(log => logging_1.logInfo(log.message)));
     driver.close();
 }
-function getComputedStylesForPage(pageName, url, isOriginal, elementsToScrape, elementsToIgnore) {
+function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape, elementsToIgnore) {
     let promiseArray = [];
     driver.get(url);
     for (let diffElement of elementsToScrape) {
-        promiseArray.push(driver.executeScript(scrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
-            .then((resultsOfScraping) => {
-            if (typeof resultsOfScraping.error !== "undefined") {
-                logging_1.logError(resultsOfScraping.error + ' on page ' + pageName);
-                diffElement.error = 'there was an error when gathering styles for this element';
-            }
-            else {
-                logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-                logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
-                if (isOriginal) {
-                    diffElement.original = resultsOfScraping.computedStyles;
+        if (typeof diffElement.error === 'undefined') {
+            promiseArray.push(driver.executeScript(scrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
+                .then((resultsOfScraping) => {
+                if (typeof resultsOfScraping.error !== "undefined") {
+                    logging_1.logError(resultsOfScraping.error + ' on page ' + pageName);
+                    diffElement.error = isOriginalRun ?
+                        'Error in browser when gathering original styles for element - is the element selector correct?' :
+                        'Error in browser when gathering comparand styles for element - is the element selector correct?';
                 }
                 else {
-                    diffElement.comparand = resultsOfScraping.computedStyles;
+                    logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
+                    logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+                    if (isOriginalRun) {
+                        diffElement.original = resultsOfScraping.computedStyles;
+                    }
+                    else {
+                        diffElement.comparand = resultsOfScraping.computedStyles;
+                    }
+                    return resultsOfScraping;
                 }
-                return resultsOfScraping;
-            }
-        }));
+            }));
+        }
+        else {
+            diffElement.error += ' As this errored gathering original styles is was skipped when gathering comparand styles.';
+        }
     }
     return Promise.all(promiseArray);
 }
@@ -68,8 +75,8 @@ function init() {
         let beforeAndAfterPromises = [];
         let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}${configParser_1.crawlerConfig.beforeQueryString}`;
         let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}${configParser_1.crawlerConfig.afterQueryString}`;
-        let addPagePromiseToArray = function (isOriginal) {
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginal ? beforePageUrl : afterPageUrl, isOriginal, page.elementsToTest, page.elementsToIgnore));
+        let addPagePromiseToArray = function (isOriginalRun) {
+            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun ? beforePageUrl : afterPageUrl, isOriginalRun, page.elementsToTest, page.elementsToIgnore));
         };
         if (currentMode === Modes.getBothAndGenerateDiff) {
             addPagePromiseToArray(true);
@@ -112,17 +119,22 @@ let processComparandAndSaveDiff = function (page, allResultsArray) {
  *
  * @param page
  * @param allResultsArray
+ * @param writeOriginal
  */
 let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = true) {
     for (let index in page.elementsToTest) {
         let diffElement = page.elementsToTest[index];
-        if (typeof diffElement.error !== "undefined") {
+        if (typeof diffElement.error === 'undefined') {
             diffElement.diff = differ(diffElement.original, diffElement.comparand);
             CleanDiffElement_1.cleanDiffElement(diffElement);
         }
     }
     page.elementsToTest = page.elementsToTest.filter((diffElement) => {
-        return typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0;
+        /**
+         * Keep elements that have diffs or should present an error
+         */
+        return (typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0)
+            || typeof diffElement.error !== 'undefined';
     });
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
@@ -173,6 +185,12 @@ let createJson = function (mapper) {
 };
 let createDiffJson = function () {
     return createJson((diffElement) => {
+        if (typeof diffElement.error !== 'undefined') {
+            return {
+                selector: diffElement.selector,
+                error: diffElement.error
+            };
+        }
         return {
             selector: diffElement.selector,
             diff: diffElement.diff
@@ -183,6 +201,7 @@ let createOriginalJson = function () {
     return createJson((diffElement) => {
         if (typeof diffElement.error !== "undefined") {
             return {
+                selector: diffElement.selector,
                 error: diffElement.error
             };
         }
@@ -194,6 +213,12 @@ let createOriginalJson = function () {
 };
 let createComparandJson = function () {
     return createJson((diffElement) => {
+        if (typeof diffElement.error !== "undefined") {
+            return {
+                selector: diffElement.selector,
+                error: diffElement.error
+            };
+        }
         return {
             selector: diffElement.selector,
             comparand: diffElement.comparand

@@ -51,7 +51,8 @@
                             <fieldset class="form-group">
                                 <input type="text" name="property" id="property" class="form-control"
                                        data-bind="value: addPropertyAndValueFilter.propertyName">
-                                <select class="form-control" name="category" data-bind="value: addPropertyAndValueFilter.isPropertyNameRegExp">
+                                <select class="form-control" name="category"
+                                        data-bind="value: addPropertyAndValueFilter.isPropertyNameRegExp">
                                     <option value="false">Text</option>
                                     <option value="true">RegExp</option>
                                 </select>
@@ -63,8 +64,9 @@
                         <div class="input-group">
                             <fieldset class="form-group">
                                 <input type="text" name="value" id="value" class="form-control"
-                                                           data-bind="value: addPropertyAndValueFilter.value">
-                                <select class="form-control" name="category" data-bind="value: addPropertyAndValueFilter.isValueRegExp">
+                                       data-bind="value: addPropertyAndValueFilter.value">
+                                <select class="form-control" name="category"
+                                        data-bind="value: addPropertyAndValueFilter.isValueRegExp">
                                     <option value="false">Text</option>
                                     <option value="true">RegExp</option>
                                 </select>
@@ -166,6 +168,11 @@
                             <bs-collapsible-panel
                                     params="diffElement:$data">
                                         <span class="panel-heading">
+                                            <span data-bind="visible: typeof diffElement.error !== 'undefined'">
+                                                <span class="glyphicon glyphicon-exclamation-sign"
+                                                  aria-hidden="true"></span>
+                                                <span class="sr-only">Error:</span>
+                                            </span>
                                             <span data-bind="text: diffElement.selector"></span>
                                             <span class="pull-right">
                                                 Elements: <span class="label label-as-badge label-default"
@@ -174,6 +181,9 @@
                                                               data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
                                             </span>
                                         </span>
+                                <div class="alert alert-danger" role="alert" data-bind="visible: typeof diffElement.error !== 'undefined'" class="text-danger">
+                                    <span data-bind="text: diffElement.error"></span>
+                                </div>
                                 <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
                             </bs-collapsible-panel>
                             <!-- /ko -->
