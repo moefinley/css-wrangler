@@ -10,7 +10,7 @@ exports.crawlerConfig = {
             id: 'home',
             name: 'Home page',
             path: '/home.html',
-            elementsToTest: sharedElementsToTest,
+            elementsToTest: sharedElementsToTest.concat(['.i-dont-exist']),
             elementsToIgnore: ['.ignore-me'],
             states: {
                 login: function(driver){
@@ -24,7 +24,7 @@ exports.crawlerConfig = {
             id: 'about',
             name: 'About page',
             path: '/about.html',
-            elementsToTest: sharedElementsToTest.concat(['#aboutFooter'])
+            elementsToTest: sharedElementsToTest.concat(['#aboutFooter']).concat(['.i-dont-exist'])
         },
         {
             id: 'same',

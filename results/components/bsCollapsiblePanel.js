@@ -2,7 +2,7 @@ define(["require", "exports"], function (require, exports) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
     exports.template = `
-    <div class="panel panel-default">
+    <div class="panel" data-bind="css: panelClass">
         <div class="panel-heading" role="tab" data-bind="attr: {href: 'heading' + id}">
             <h4 class="panel-title">
                 <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne" data-bind="attr: {href: '#' + id}, template: {nodes: panelHeadingNode}">
@@ -30,6 +30,10 @@ define(["require", "exports"], function (require, exports) {
             componentInfo.templateNodes = componentInfo.templateNodes.filter(e => e.nodeType !== 3);
             self.panelHeadingNode = componentInfo.templateNodes.splice(componentInfo.templateNodes.findIndex(e => e.classList.contains('panel-heading')), 1);
             self.panelNodes = componentInfo.templateNodes;
+            self.panelClass = 'panel-default';
+            if (!!self.diffElement && typeof self.diffElement.error === 'string') {
+                self.panelClass = 'panel-danger';
+            }
             return self;
         }
     };
