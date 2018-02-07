@@ -9,6 +9,12 @@ const scrapeComputedStyles_1 = require("./browserScript/scrapeComputedStyles");
 const logging_1 = require("./logging/logging");
 var logging = webdriver.logging;
 const differ = deepDiff.diff;
+function run() {
+    if (!configParser_1.showResults) {
+        init();
+    }
+}
+exports.run = run;
 let capabilities = webdriver.Capabilities.chrome();
 let loggingPreferences = new logging.Preferences();
 loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
