@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import {ParsedPath} from "path";
 import {Page} from "./Page";
 import {DiffElement} from "./diffElement";
+import * as opn from "opn";
 
 /* External config file interfaces */
 interface IPageExtConfig {
@@ -123,32 +124,45 @@ let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
 let noptConfigKnownOpts = {
     'config' : path,
     'getOriginal' : Boolean,
-    'original' : path
+    'original' : path,
+    'showResults': Boolean
 };
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
+
+export const showResults = parsed.showResults;
 let rawConfig;
-try {
-    rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
-} catch (e) {
-    throw `No config file found or invalid commonjs module : ${e.message}`;
-}
-
-if(!validateRawConfig(rawConfig)) throw 'Invalid config';
-
 let originalData = null;
-if(typeof parsed.original !== "undefined"){
+let configObject = null;
+
+if(parsed.showResults){
+    console.log('opening url');
+    opn(path.resolve(__dirname, '../../results/results.html')).then(()=>{
+        process.exit();
+    });
+} else {
     try {
-        originalData = JSON.parse(fs.readFileSync(parsed.original, 'utf8'));
-    } catch(e) {
-        throw 'could not read original file';
+        rawConfig = <ICrawlerExtConfig>require(parsed.config).crawlerConfig;
+    } catch (e) {
+        throw `No config file found or invalid commonjs module : ${e.message}`;
     }
 
+    if(!validateRawConfig(rawConfig)) throw 'Invalid config';
+
+    if(typeof parsed.original !== "undefined"){
+        try {
+            originalData = JSON.parse(fs.readFileSync(parsed.original, 'utf8'));
+        } catch(e) {
+            throw 'could not read original file';
+        }
+    }
+
+    configObject = new CrawlerConfig(
+        parsed.config,
+        parsed.getOriginal,
+        rawConfig,
+        originalData
+    );
 }
 
-export const crawlerConfig = new CrawlerConfig(
-    parsed.config,
-    parsed.getOriginal,
-    rawConfig,
-    originalData
-);
+export const crawlerConfig = configObject;

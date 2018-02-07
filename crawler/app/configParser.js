@@ -5,6 +5,7 @@ const path = require("path");
 const fs = require("fs");
 const Page_1 = require("./Page");
 const diffElement_1 = require("./diffElement");
+const opn = require("opn");
 class CrawlerConfig {
     constructor(configFile, getOriginal, rawConfig, originalData) {
         this.configFile = configFile;
@@ -71,26 +72,38 @@ let validateRawConfig = function (rawConfig) {
 let noptConfigKnownOpts = {
     'config': path,
     'getOriginal': Boolean,
-    'original': path
+    'original': path,
+    'showResults': Boolean
 };
 let parsed = nopt(noptConfigKnownOpts, {}, process.argv, 2);
+exports.showResults = parsed.showResults;
 let rawConfig;
-try {
-    rawConfig = require(parsed.config).crawlerConfig;
-}
-catch (e) {
-    throw `No config file found or invalid commonjs module : ${e.message}`;
-}
-if (!validateRawConfig(rawConfig))
-    throw 'Invalid config';
 let originalData = null;
-if (typeof parsed.original !== "undefined") {
+let configObject = null;
+if (parsed.showResults) {
+    console.log('opening url');
+    opn(path.resolve(__dirname, '../../results/results.html')).then(() => {
+        process.exit();
+    });
+}
+else {
     try {
-        originalData = JSON.parse(fs.readFileSync(parsed.original, 'utf8'));
+        rawConfig = require(parsed.config).crawlerConfig;
     }
     catch (e) {
-        throw 'could not read original file';
+        throw `No config file found or invalid commonjs module : ${e.message}`;
     }
+    if (!validateRawConfig(rawConfig))
+        throw 'Invalid config';
+    if (typeof parsed.original !== "undefined") {
+        try {
+            originalData = JSON.parse(fs.readFileSync(parsed.original, 'utf8'));
+        }
+        catch (e) {
+            throw 'could not read original file';
+        }
+    }
+    configObject = new CrawlerConfig(parsed.config, parsed.getOriginal, rawConfig, originalData);
 }
-exports.crawlerConfig = new CrawlerConfig(parsed.config, parsed.getOriginal, rawConfig, originalData);
+exports.crawlerConfig = configObject;
 //# sourceMappingURL=configParser.js.map

@@ -1,6 +1,6 @@
 import describe = testing.describe;
 import * as testing from "selenium-webdriver/testing";
-import {crawlerConfig} from './configParser';
+import {crawlerConfig, showResults} from './configParser';
 import * as fs from "fs";
 import * as path from 'path';
 import * as deepDiff from "deep-diff";
@@ -14,6 +14,12 @@ import diff = require("deep-diff");
 import IThenable = promise.IThenable;
 const differ = deepDiff.diff;
 
+
+export function run(){
+    if(!showResults){
+        init();
+    }
+}
 
 let capabilities = webdriver.Capabilities.chrome();
 let loggingPreferences = new logging.Preferences();
