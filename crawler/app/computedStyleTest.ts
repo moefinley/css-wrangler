@@ -1,13 +1,13 @@
 import describe = testing.describe;
 import * as testing from "selenium-webdriver/testing";
-import {crawlerConfig, showResults} from './configParser';
+import {crawlerConfig, showResults, verboseLogging} from './configParser';
 import * as fs from "fs";
 import * as path from 'path';
 import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
 import {scrapeComputedStyles} from "./browserScript/scrapeComputedStyles";
-import {logInfo, logError, logVerboseInfo} from "./logging/logging";
+import {logInfo, logError, logVerboseInfo, getVerboseLog, getErrorLog} from "./logging/logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
 import diff = require("deep-diff");
@@ -31,7 +31,9 @@ let driver = new webdriver.Builder()
     .build();
 
 function unloadSelenium() {
-    driver.manage().logs().get("browser").then(entry => entry.forEach(log => logInfo(log.message)));
+    driver.manage().logs().get("browser").then(
+        entry => entry.forEach(log => logVerboseInfo("Selenium error: " + log.message))
+    );
     driver.close();
 }
 
@@ -55,8 +57,8 @@ function getComputedStylesForPage(
                             'Error in browser when gathering original styles for element - is the element selector correct?' :
                             'Error in browser when gathering comparand styles for element - is the element selector correct?';
                     }else{
-                        logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-                        logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+                        logInfo(`Found ${diffElement.selector} on page ${pageName}`);
+                        logVerboseInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
                         if (isOriginalRun) {
                             diffElement.original = resultsOfScraping.computedStyles;
                         } else {
@@ -66,7 +68,8 @@ function getComputedStylesForPage(
                     }
                 }));
         } else {
-            diffElement.error += ' As this errored gathering original styles is was skipped when gathering comparand styles.';
+            logError(`${diffElement.selector} had errored when gathering original styles and was skipped when gathering comparand styles.`);
+            diffElement.error += ' As this errored gathering original styles and was skipped when gathering comparand styles.';
         }
 
     }
@@ -84,6 +87,17 @@ function getCurrentMode() {
     if (crawlerConfig.getOriginal) currentMode = Modes.getOriginal;
     logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
+}
+
+function beforeExit() {
+    if(verboseLogging){
+        getVerboseLog().forEach((message)=>{
+            console.log(message);
+        });
+    }
+    getErrorLog().forEach((message) =>{
+        console.error(message)
+    });
 }
 
 export function init() {
@@ -120,10 +134,13 @@ export function init() {
                 } else {
                     processBothAndSaveDiff(page, allResultsArray);
                 }
+            beforeExit();
         }, (error) => {
             logError(error);
+            beforeExit();
         });
     }
+
 }
 
 /**

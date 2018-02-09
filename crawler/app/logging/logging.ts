@@ -2,10 +2,20 @@ export function logInfo(logMessage:string):void{
     console.log(logMessage);
 }
 
+let verboseLog = [];
 export function logVerboseInfo(logMessage:string):void{
-    console.log(logMessage);
+    verboseLog.push(logMessage);
 }
 
+export function getVerboseLog():string[]{
+    return verboseLog;
+}
+
+let errorLog = [];
 export function logError(logMessage:string):void{
-    console.error(logMessage);
+    errorLog.push(logMessage);
+}
+
+export function getErrorLog():string[] {
+    return errorLog;
 }

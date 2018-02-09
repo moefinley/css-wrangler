@@ -24,7 +24,7 @@ let driver = new webdriver.Builder()
     .withCapabilities(capabilities)
     .build();
 function unloadSelenium() {
-    driver.manage().logs().get("browser").then(entry => entry.forEach(log => logging_1.logInfo(log.message)));
+    driver.manage().logs().get("browser").then(entry => entry.forEach(log => logging_1.logVerboseInfo("Selenium error: " + log.message)));
     driver.close();
 }
 function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape, elementsToIgnore) {
@@ -41,8 +41,8 @@ function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape
                         'Error in browser when gathering comparand styles for element - is the element selector correct?';
                 }
                 else {
-                    logging_1.logInfo(`I resolved: ${diffElement.selector} on page: ${pageName} with ${Object.keys(resultsOfScraping.computedStyles).length}`);
-                    logging_1.logInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
+                    logging_1.logInfo(`Found ${diffElement.selector} on page ${pageName}`);
+                    logging_1.logVerboseInfo(`Total ignored: ${resultsOfScraping.ignoreCount}`);
                     if (isOriginalRun) {
                         diffElement.original = resultsOfScraping.computedStyles;
                     }
@@ -54,7 +54,8 @@ function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape
             }));
         }
         else {
-            diffElement.error += ' As this errored gathering original styles is was skipped when gathering comparand styles.';
+            logging_1.logError(`${diffElement.selector} had errored when gathering original styles and was skipped when gathering comparand styles.`);
+            diffElement.error += ' As this errored gathering original styles and was skipped when gathering comparand styles.';
         }
     }
     return Promise.all(promiseArray);
@@ -73,6 +74,16 @@ function getCurrentMode() {
         currentMode = Modes.getOriginal;
     logging_1.logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
+}
+function beforeExit() {
+    if (configParser_1.verboseLogging) {
+        logging_1.getVerboseLog().forEach((message) => {
+            console.log(message);
+        });
+    }
+    logging_1.getErrorLog().forEach((message) => {
+        console.error(message);
+    });
 }
 function init() {
     let currentMode = getCurrentMode();
@@ -105,8 +116,10 @@ function init() {
             else {
                 processBothAndSaveDiff(page, allResultsArray);
             }
+            beforeExit();
         }, (error) => {
             logging_1.logError(error);
+            beforeExit();
         });
     }
 }

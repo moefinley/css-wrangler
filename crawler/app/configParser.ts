@@ -125,11 +125,12 @@ let noptConfigKnownOpts = {
     'config' : path,
     'getOriginal' : Boolean,
     'original' : path,
-    'showResults': Boolean
+    'showResults': Boolean,
+    'verbose': Boolean
 };
 let parsed = <any>nopt(noptConfigKnownOpts, {}, process.argv, 2);
 
-
+export const verboseLogging = parsed.verbose;
 export const showResults = parsed.showResults;
 let rawConfig;
 let originalData = null;
