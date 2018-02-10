@@ -1,10 +1,10 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 class Page {
-    constructor(id, name, url, elementsToTest, elementsToIgnore) {
+    constructor(id, name, path, elementsToTest, elementsToIgnore) {
         this.id = id;
         this.name = name;
-        this.url = url;
+        this.path = path;
         this.elementsToTest = elementsToTest;
         this.elementsToIgnore = [];
         this.isProcessed = false;

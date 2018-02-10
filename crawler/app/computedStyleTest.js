@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const configParser_1 = require("./configParser");
+const Settings = require("./settings/settings");
+const Config_1 = require("./config/Config");
 const fs = require("fs");
 const deepDiff = require("deep-diff");
 const webdriver = require("selenium-webdriver");
@@ -9,12 +10,7 @@ const scrapeComputedStyles_1 = require("./browserScript/scrapeComputedStyles");
 const logging_1 = require("./logging/logging");
 var logging = webdriver.logging;
 const differ = deepDiff.diff;
-function run() {
-    if (!configParser_1.showResults) {
-        init();
-    }
-}
-exports.run = run;
+const Data = require("./data/data");
 let capabilities = webdriver.Capabilities.chrome();
 let loggingPreferences = new logging.Preferences();
 loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
@@ -29,13 +25,14 @@ function unloadSelenium() {
 }
 function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape, elementsToIgnore) {
     let promiseArray = [];
+    logging_1.logVerboseInfo(`Opening url: ${url}`);
     driver.get(url);
     for (let diffElement of elementsToScrape) {
         if (typeof diffElement.error === 'undefined') {
             promiseArray.push(driver.executeScript(scrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
                 .then((resultsOfScraping) => {
                 if (typeof resultsOfScraping.error !== "undefined") {
-                    logging_1.logError(resultsOfScraping.error + ' on page ' + pageName);
+                    logging_1.logError(`${resultsOfScraping.error} on page ${pageName} ${isOriginalRun ? 'original' : 'comparand'}`);
                     diffElement.error = isOriginalRun ?
                         'Error in browser when gathering original styles for element - is the element selector correct?' :
                         'Error in browser when gathering comparand styles for element - is the element selector correct?';
@@ -68,15 +65,15 @@ var Modes;
 })(Modes || (Modes = {}));
 function getCurrentMode() {
     let currentMode = Modes.getBothAndGenerateDiff;
-    if (configParser_1.crawlerConfig.originalData !== null)
+    if (Settings.original)
         currentMode = Modes.useProvidedOriginalAndGenerateDiff;
-    if (configParser_1.crawlerConfig.getOriginal)
+    if (Settings.getOriginal)
         currentMode = Modes.getOriginal;
     logging_1.logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
 }
 function beforeExit() {
-    if (configParser_1.verboseLogging) {
+    if (Settings.verbose) {
         logging_1.getVerboseLog().forEach((message) => {
             console.log(message);
         });
@@ -85,13 +82,14 @@ function beforeExit() {
         console.error(message);
     });
 }
+exports.beforeExit = beforeExit;
 function init() {
     let currentMode = getCurrentMode();
-    for (let index in configParser_1.crawlerConfig.pages) {
-        let page = configParser_1.crawlerConfig.pages[index];
+    for (let index in Data.pages) {
+        let page = Data.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = `http://${configParser_1.crawlerConfig.beforeUrl}${page.url}${configParser_1.crawlerConfig.beforeQueryString}`;
-        let afterPageUrl = `http://${configParser_1.crawlerConfig.afterUrl}${page.url}${configParser_1.crawlerConfig.afterQueryString}`;
+        let beforePageUrl = `http://${Config_1.Config.beforeUrl}${page.path}${Config_1.Config.beforeQueryString}`;
+        let afterPageUrl = `http://${Config_1.Config.afterUrl}${page.path}${Config_1.Config.afterQueryString}`;
         let addPagePromiseToArray = function (isOriginalRun) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun ? beforePageUrl : afterPageUrl, isOriginalRun, page.elementsToTest, page.elementsToIgnore));
         };
@@ -116,10 +114,8 @@ function init() {
             else {
                 processBothAndSaveDiff(page, allResultsArray);
             }
-            beforeExit();
         }, (error) => {
             logging_1.logError(error);
-            beforeExit();
         });
     }
 }
@@ -158,10 +154,10 @@ let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = tr
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         logging_1.logInfo('last page complete');
-        writeToDisk(createDiffJson(), configParser_1.crawlerConfig.diffOutputPath);
+        writeToDisk(createDiffJson(), Config_1.Config.diffOutputPath);
         if (writeOriginal)
-            writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
-        writeToDisk(createComparandJson(), configParser_1.crawlerConfig.comparandOutputPath);
+            writeToDisk(createOriginalJson(), Config_1.Config.originalOutputPath);
+        writeToDisk(createComparandJson(), Config_1.Config.comparandOutputPath);
         unloadSelenium();
     }
 };
@@ -174,13 +170,13 @@ let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = tr
 let parseRawOriginalAndSave = function (page) {
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
-        writeToDisk(createOriginalJson(), configParser_1.crawlerConfig.originalOutputPath);
+        writeToDisk(createOriginalJson(), Config_1.Config.originalOutputPath);
         unloadSelenium();
     }
 };
 let checkAllPagesProcessed = function () {
     let returnVal = true;
-    configParser_1.crawlerConfig.pages.forEach((page) => {
+    Data.pages.forEach((page) => {
         if (page.isProcessed === false)
             returnVal = false;
     });
@@ -188,15 +184,15 @@ let checkAllPagesProcessed = function () {
 };
 let createJson = function (mapper) {
     return JSON.stringify({
-        configFile: configParser_1.crawlerConfig.configFile,
+        configFile: Settings.config,
         date: Date.now(),
-        original: configParser_1.crawlerConfig.beforeUrl,
-        comparator: configParser_1.crawlerConfig.afterUrl,
-        pages: configParser_1.crawlerConfig.pages.map((page, index, array) => {
+        original: Config_1.Config.beforeUrl,
+        comparator: Config_1.Config.afterUrl,
+        pages: Data.pages.map((page, index, array) => {
             return {
                 id: page.id,
                 name: page.name,
-                url: page.url,
+                path: page.path,
                 elementsToTest: page.elementsToTest.map(mapper)
             };
         })

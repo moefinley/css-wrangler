@@ -1,8 +1,8 @@
 import describe = testing.describe;
 import * as testing from "selenium-webdriver/testing";
-import {crawlerConfig, showResults, verboseLogging} from './configParser';
+import * as Settings from "./settings/settings";
+import {Config} from './config/Config';
 import * as fs from "fs";
-import * as path from 'path';
 import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
 import {cleanDiffElement} from "./CleanDiffElement";
@@ -10,16 +10,9 @@ import {scrapeComputedStyles} from "./browserScript/scrapeComputedStyles";
 import {logInfo, logError, logVerboseInfo, getVerboseLog, getErrorLog} from "./logging/logging";
 import promise = webdriver.promise;
 import logging = webdriver.logging;
-import diff = require("deep-diff");
 import IThenable = promise.IThenable;
 const differ = deepDiff.diff;
-
-
-export function run(){
-    if(!showResults){
-        init();
-    }
-}
+import * as Data from "./data/data";
 
 let capabilities = webdriver.Capabilities.chrome();
 let loggingPreferences = new logging.Preferences();
@@ -45,14 +38,14 @@ function getComputedStylesForPage(
     elementsToIgnore:string[]
 ):Promise<scrapedObjInterface[]> {
     let promiseArray:IThenable<scrapedObjInterface>[] = [];
-
+    logVerboseInfo(`Opening url: ${url}`);
     driver.get(url);
     for (let diffElement of elementsToScrape) {
         if(typeof diffElement.error === 'undefined'){
             promiseArray.push(<IThenable<scrapedObjInterface>>driver.executeScript<scrapedObjInterface>(scrapeComputedStyles, diffElement.selector, elementsToIgnore)
                 .then((resultsOfScraping):scrapedObjInterface => {
                     if(typeof resultsOfScraping.error !== "undefined"){
-                        logError(resultsOfScraping.error + ' on page ' + pageName);
+                        logError(`${resultsOfScraping.error} on page ${pageName} ${isOriginalRun ? 'original' : 'comparand'}`);
                         diffElement.error = isOriginalRun ?
                             'Error in browser when gathering original styles for element - is the element selector correct?' :
                             'Error in browser when gathering comparand styles for element - is the element selector correct?';
@@ -83,14 +76,14 @@ enum Modes {
 }
 function getCurrentMode() {
     let currentMode: Modes = Modes.getBothAndGenerateDiff;
-    if (crawlerConfig.originalData !== null) currentMode = Modes.useProvidedOriginalAndGenerateDiff;
-    if (crawlerConfig.getOriginal) currentMode = Modes.getOriginal;
+    if (Settings.original) currentMode = Modes.useProvidedOriginalAndGenerateDiff;
+    if (Settings.getOriginal) currentMode = Modes.getOriginal;
     logVerboseInfo(`current mode is: ${Modes[currentMode]}`);
     return currentMode;
 }
 
-function beforeExit() {
-    if(verboseLogging){
+export function beforeExit() {
+    if(Settings.verbose){
         getVerboseLog().forEach((message)=>{
             console.log(message);
         });
@@ -103,11 +96,11 @@ function beforeExit() {
 export function init() {
     let currentMode = getCurrentMode();
 
-    for (let index in crawlerConfig.pages) {
-        let page = crawlerConfig.pages[index];
+    for (let index in Data.pages) {
+        let page = Data.pages[index];
         let beforeAndAfterPromises = [];
-        let beforePageUrl = `http://${crawlerConfig.beforeUrl}${page.url}${crawlerConfig.beforeQueryString}`;
-        let afterPageUrl = `http://${crawlerConfig.afterUrl}${page.url}${crawlerConfig.afterQueryString}`;
+        let beforePageUrl = `http://${Config.beforeUrl}${page.path}${Config.beforeQueryString}`;
+        let afterPageUrl = `http://${Config.afterUrl}${page.path}${Config.afterQueryString}`;
 
         let addPagePromiseToArray = function(isOriginalRun:boolean) {
             beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun?beforePageUrl:afterPageUrl, isOriginalRun, page.elementsToTest, page.elementsToIgnore));
@@ -134,10 +127,8 @@ export function init() {
                 } else {
                     processBothAndSaveDiff(page, allResultsArray);
                 }
-            beforeExit();
         }, (error) => {
             logError(error);
-            beforeExit();
         });
     }
 
@@ -181,9 +172,9 @@ let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrape
 
     if (checkAllPagesProcessed()) {
         logInfo('last page complete');
-        writeToDisk(createDiffJson(), crawlerConfig.diffOutputPath);
-        if(writeOriginal) writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
-        writeToDisk(createComparandJson(), crawlerConfig.comparandOutputPath);
+        writeToDisk(createDiffJson(), Config.diffOutputPath);
+        if(writeOriginal) writeToDisk(createOriginalJson(), Config.originalOutputPath);
+        writeToDisk(createComparandJson(), Config.comparandOutputPath);
         unloadSelenium();
     }
 };
@@ -197,14 +188,14 @@ let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrape
 let parseRawOriginalAndSave = function(page:pageInterface):void{
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
-        writeToDisk(createOriginalJson(), crawlerConfig.originalOutputPath);
+        writeToDisk(createOriginalJson(), Config.originalOutputPath);
         unloadSelenium();
     }
 };
 
 let checkAllPagesProcessed = function ():boolean{
     let returnVal = true;
-    crawlerConfig.pages.forEach((page)=>{
+    Data.pages.forEach((page)=>{
         if(page.isProcessed === false) returnVal = false;
     });
     return returnVal;
@@ -212,15 +203,15 @@ let checkAllPagesProcessed = function ():boolean{
 
 let createJson = function(mapper:(IDiffElement)=>any):string {
     return JSON.stringify({
-        configFile: crawlerConfig.configFile,
+        configFile: Settings.config,
         date: Date.now(),
-        original: crawlerConfig.beforeUrl,
-        comparator: crawlerConfig.afterUrl,
-        pages: crawlerConfig.pages.map((page, index, array)=>{
+        original: Config.beforeUrl,
+        comparator: Config.afterUrl,
+        pages: Data.pages.map((page, index, array)=>{
             return {
                 id:page.id,
                 name: page.name,
-                url:page.url,
+                path:page.path,
                 elementsToTest: page.elementsToTest.map(mapper)
             }
         })

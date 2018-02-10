@@ -5,7 +5,7 @@ export class Page implements pageInterface{
     constructor (
         public id:string,
         public name: string,
-        public url:string,
+        public path:string,
         public elementsToTest:DiffElement[],
         elementsToIgnore?:string[]
     ){

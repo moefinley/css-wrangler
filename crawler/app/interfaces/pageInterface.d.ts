@@ -1,7 +1,7 @@
 interface pageInterface {
     id: string;
     name: string;
-    url: string;
+    path: string;
     elementsToTest:diffElementInterface[];
     elementsToIgnore:string[];
     isProcessed: boolean;
