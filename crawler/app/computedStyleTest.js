@@ -11,14 +11,17 @@ const logging_1 = require("./logging/logging");
 var logging = webdriver.logging;
 const differ = deepDiff.diff;
 const Data = require("./data/data");
-let capabilities = webdriver.Capabilities.chrome();
-let loggingPreferences = new logging.Preferences();
-loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
-capabilities.setLoggingPrefs(loggingPreferences);
-let driver = new webdriver.Builder()
-    .forBrowser('chrome')
-    .withCapabilities(capabilities)
-    .build();
+let driver;
+function loadSelenium() {
+    let capabilities = webdriver.Capabilities.chrome();
+    let loggingPreferences = new logging.Preferences();
+    loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
+    capabilities.setLoggingPrefs(loggingPreferences);
+    driver = new webdriver.Builder()
+        .forBrowser('chrome')
+        .withCapabilities(capabilities)
+        .build();
+}
 function unloadSelenium() {
     driver.manage().logs().get("browser").then(entry => entry.forEach(log => logging_1.logVerboseInfo("Selenium error: " + log.message)));
     driver.close();
@@ -84,6 +87,7 @@ function beforeExit() {
 }
 exports.beforeExit = beforeExit;
 function init() {
+    loadSelenium();
     let currentMode = getCurrentMode();
     for (let index in Data.pages) {
         let page = Data.pages[index];

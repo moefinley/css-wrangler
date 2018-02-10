@@ -1,0 +1,15 @@
+<table class="table table-striped diff-table">
+    <thead>
+    <tr>
+        <th>Kind</th>
+        <th>Path to property<br/><small>XPaths represent an element</small></th>
+        <th>Original</th>
+        <th>Comparand</th>
+    </tr>
+    </thead>
+    <tbody>
+    <!-- ko foreach: rowData -->
+    <tr class="results-row" data-bind="component: {name: 'row', params: $data}"></tr>
+    <!-- /ko -->
+    </tbody>
+</table>

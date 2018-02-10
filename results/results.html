@@ -10,7 +10,12 @@
     <script src="libs/knockout-3.4.1.debug.js"></script>
     <script src="libs/knockout.mapping-latest.js"></script>
     <script src="libs/bootstrap/js/bootstrap.min.js"></script>
-    <script src="libs/require.js" data-main="results.js"></script>
+    <script>
+        var require = {
+            paths: { 'text': './libs/text' }
+        };
+    </script>
+    <script src="libs/require.js" data-main="../results.js"></script>
 </head>
 <body>
 <div class="modal fade in" id="fileInputModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"

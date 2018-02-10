@@ -1,0 +1,8 @@
+<bs-collapsible-panel params="elementDiffs: elementDiffs, isExpanded: false">
+    <span class="panel-heading">Element changes</span>
+    <diff-table params="{rowData: elementDiffs}"></diff-table>
+</bs-collapsible-panel>
+<bs-collapsible-panel params="styleDiffs: styleDiffs, isExpanded: true">
+    <span class="panel-heading">Style changes</span>
+    <diff-table params="{rowData: styleDiffs}"></diff-table>
+</bs-collapsible-panel>

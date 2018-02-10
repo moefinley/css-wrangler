@@ -52,6 +52,7 @@
     "escape-string-regexp": "^1.0.5",
     "nopt": "^4.0.1",
     "opn": "^5.2.0",
-    "selenium-webdriver": "^3.6.0"
+    "selenium-webdriver": "^3.6.0",
+    "serve": "^6.4.9"
   }
 }

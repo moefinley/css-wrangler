@@ -1,22 +1,8 @@
-define(["require", "exports"], function (require, exports) {
+define(["require", "exports", "text!./collapsiblePanel.html"], function (require, exports, collapsiblePanelTemplate) {
     "use strict";
     Object.defineProperty(exports, "__esModule", { value: true });
-    exports.template = `
-    <div class="panel" data-bind="css: panelClass">
-        <div class="panel-heading" role="tab" data-bind="attr: {href: 'heading' + id}">
-            <h4 class="panel-title">
-                <a role="button" data-toggle="collapse" aria-expanded="true" aria-controls="collapseOne" data-bind="attr: {href: '#' + id}, template: {nodes: panelHeadingNode}">
-                  
-                </a>
-            </h4>
-        </div>
-        <div class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne" data-bind="attr: {id: id, 'aria-labelledby': 'heading' + id}, css: {'in': isExpanded}, foreach: panelNodes">
-            <div class="panel-body" data-bind="template: { nodes: [$data], data: $parent }">
-            
-            </div>
-        </div>
-    </div>
-`;
+    /// <amd-dependency path="text!./collapsiblePanel.html" name="collapsiblePanelTemplate"/>
+    exports.template = collapsiblePanelTemplate;
     exports.viewModel = {
         createViewModel: function (params, componentInfo) {
             let self = {};
@@ -38,4 +24,4 @@ define(["require", "exports"], function (require, exports) {
         }
     };
 });
-//# sourceMappingURL=bsCollapsiblePanel.js.map
+//# sourceMappingURL=collapsiblePanel.js.map

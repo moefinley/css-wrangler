@@ -13,15 +13,20 @@ import logging = webdriver.logging;
 import IThenable = promise.IThenable;
 const differ = deepDiff.diff;
 import * as Data from "./data/data";
+import {WebDriver} from "selenium-webdriver";
 
-let capabilities = webdriver.Capabilities.chrome();
-let loggingPreferences = new logging.Preferences();
-loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
-capabilities.setLoggingPrefs(loggingPreferences);
-let driver = new webdriver.Builder()
-    .forBrowser('chrome')
-    .withCapabilities(capabilities)
-    .build();
+let driver: WebDriver;
+
+function loadSelenium(){
+    let capabilities = webdriver.Capabilities.chrome();
+    let loggingPreferences = new logging.Preferences();
+    loggingPreferences.setLevel(logging.Type.BROWSER, logging.Level.DEBUG);
+    capabilities.setLoggingPrefs(loggingPreferences);
+    driver = new webdriver.Builder()
+        .forBrowser('chrome')
+        .withCapabilities(capabilities)
+        .build();
+}
 
 function unloadSelenium() {
     driver.manage().logs().get("browser").then(
@@ -94,6 +99,7 @@ export function beforeExit() {
 }
 
 export function init() {
+    loadSelenium();
     let currentMode = getCurrentMode();
 
     for (let index in Data.pages) {

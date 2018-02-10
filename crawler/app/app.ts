@@ -1,5 +1,6 @@
 import * as opn from "opn";
 import * as path from "path";
+import * as serve from "serve";
 import {readConfigFile} from "./config/ConfigFileParser";
 import * as Settings from "./settings/settings";
 import {beforeExit, init} from "./computedStyleTest";
@@ -7,8 +8,15 @@ import {beforeExit, init} from "./computedStyleTest";
 export function run(){
     if(Settings.showResults) {
         console.log('opening url');
-        opn(path.resolve(__dirname, '../../results/results.html')).then(()=>{
-            process.exit();
+        serve(path.resolve(__dirname, '../../results/'), {
+            port: 1337,
+            ignore: ['node_modules']
+        });
+        opn('http://localhost:1337/results.html').then(()=>{
+            console.log('Serving results page. Press return to exit....');
+
+            process.stdin.resume();
+            process.stdin.on('data', process.exit);
         });
     } else {
         readConfigFile();
