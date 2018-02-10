@@ -11,7 +11,7 @@ export function viewModel(diffElement: diffElementInterface) {
 export let template = `
 <bs-collapsible-panel params="elementDiffs: elementDiffs, isExpanded: false">
     <span class="panel-heading">Element changes</span>
-    <table class="table table-striped">
+    <table class="table table-striped diff-table">
             <thead>
             <tr>
                 <th>Kind</th>
@@ -29,7 +29,7 @@ export let template = `
 </bs-collapsible-panel>
 <bs-collapsible-panel params="styleDiffs: styleDiffs, isExpanded: true">
     <span class="panel-heading">Style changes</span>
-    <table class="table table-striped">
+    <table class="table table-striped diff-table">
             <thead>
             <tr>
                 <th>Kind</th>

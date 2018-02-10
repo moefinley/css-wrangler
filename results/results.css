@@ -1,3 +1,14 @@
+.diff-table {
+  table-layout: fixed; }
+  .diff-table thead th:nth-child(1) {
+    width: 10%; }
+  .diff-table thead th:nth-child(2) {
+    width: 30%; }
+  .diff-table thead th:nth-child(3) {
+    width: 30%; }
+  .diff-table td {
+    overflow: auto; }
+
 .results-row .path {
   max-width: 200px;
   text-overflow: ellipsis; }

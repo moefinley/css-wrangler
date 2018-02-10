@@ -1,3 +1,20 @@
+.diff-table {
+    table-layout: fixed;
+    thead {
+        th:nth-child(1){
+            width:10%;
+        }
+        th:nth-child(2){
+            width:30%;
+        }
+        th:nth-child(3){
+            width:30%;
+        }
+    }
+    td {
+        overflow:auto;
+    }
+}
 .results-row {
     .path {
         max-width: 200px;
