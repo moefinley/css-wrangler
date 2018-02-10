@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const chai = require("chai");
-const diffElement_1 = require("../../../crawler/app/diffElement");
+const diffElement_1 = require("../../../crawler/app/data/diffElement");
 const expect = chai.expect;
 suite('DiffElement object', () => {
     test('should create a DiffElement when all required value are passed', () => {

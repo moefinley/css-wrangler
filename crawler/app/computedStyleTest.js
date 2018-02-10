@@ -5,7 +5,7 @@ const Config_1 = require("./config/Config");
 const fs = require("fs");
 const deepDiff = require("deep-diff");
 const webdriver = require("selenium-webdriver");
-const CleanDiffElement_1 = require("./CleanDiffElement");
+const utils_1 = require("./utils");
 const scrapeComputedStyles_1 = require("./browserScript/scrapeComputedStyles");
 const logging_1 = require("./logging/logging");
 var logging = webdriver.logging;
@@ -145,7 +145,7 @@ let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = tr
         let diffElement = page.elementsToTest[index];
         if (typeof diffElement.error === 'undefined') {
             diffElement.diff = differ(diffElement.original, diffElement.comparand);
-            CleanDiffElement_1.cleanDiffElement(diffElement);
+            utils_1.cleanDiffElement(diffElement);
         }
     }
     page.elementsToTest = page.elementsToTest.filter((diffElement) => {

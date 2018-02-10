@@ -7,7 +7,6 @@ import {beforeExit, init} from "./computedStyleTest";
 
 export function run(){
     if(Settings.showResults) {
-        console.log('opening url');
         serve(path.resolve(__dirname, '../../results/'), {
             port: 1337,
             ignore: ['node_modules']

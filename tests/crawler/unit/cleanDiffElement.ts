@@ -1,6 +1,6 @@
 import * as chai from 'chai';
-import {DiffElement} from "../../../crawler/app/diffElement";
-import {cleanDiffElement} from "../../../crawler/app/cleanDiffElement";
+import {DiffElement} from "../../../crawler/app/data/diffElement";
+import {cleanDiffElement} from "../../../crawler/app/utils";
 const expect = chai.expect;
 
 suite('cleanDiffElement function', () => {

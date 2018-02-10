@@ -8,7 +8,6 @@ const Settings = require("./settings/settings");
 const computedStyleTest_1 = require("./computedStyleTest");
 function run() {
     if (Settings.showResults) {
-        console.log('opening url');
         serve(path.resolve(__dirname, '../../results/'), {
             port: 1337,
             ignore: ['node_modules']

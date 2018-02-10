@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {DiffElement} from "../../../crawler/app/diffElement";
+import {DiffElement} from "../../../crawler/app/data/diffElement";
 const expect = chai.expect;
 
 suite('DiffElement object', ()=> {

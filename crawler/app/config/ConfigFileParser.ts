@@ -1,6 +1,6 @@
 import * as fs from 'fs';
-import {Page} from "../Page";
-import {DiffElement} from "../diffElement";
+import {Page} from "../data/page";
+import {DiffElement} from "../data/diffElement";
 import {Config} from "./Config";
 import {ICrawlerExtConfig} from "./ICrawlerExtConfig";
 import * as Settings from "../settings/settings";

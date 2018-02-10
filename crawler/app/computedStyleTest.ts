@@ -5,7 +5,7 @@ import {Config} from './config/Config';
 import * as fs from "fs";
 import * as deepDiff from "deep-diff";
 import * as webdriver from "selenium-webdriver";
-import {cleanDiffElement} from "./CleanDiffElement";
+import {cleanDiffElement} from "./utils";
 import {scrapeComputedStyles} from "./browserScript/scrapeComputedStyles";
 import {logInfo, logError, logVerboseInfo, getVerboseLog, getErrorLog} from "./logging/logging";
 import promise = webdriver.promise;

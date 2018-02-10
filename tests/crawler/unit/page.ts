@@ -1,5 +1,5 @@
 import * as chai from 'chai';
-import {Page} from "../../../crawler/app/Page";
+import {Page} from "../../../crawler/app/data/page";
 const expect = chai.expect;
 
 suite('Page object', ()=>{

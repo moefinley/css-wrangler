@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const fs = require("fs");
-const Page_1 = require("../Page");
-const diffElement_1 = require("../diffElement");
+const page_1 = require("../data/page");
+const diffElement_1 = require("../data/diffElement");
 const Config_1 = require("./Config");
 const Settings = require("../settings/settings");
 const Data = require("../data/data");
@@ -49,7 +49,7 @@ function readConfigFile() {
         rawConfig = require(Settings.config).crawlerConfig;
         if (!Settings.original) {
             /* Create new pages ready to be populated */
-            rawConfig.pages.map(page => new Page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore)).forEach((page, index, rawPages) => {
+            rawConfig.pages.map(page => new page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore)).forEach((page, index, rawPages) => {
                 Data.addPage(page);
             });
         }
@@ -67,7 +67,7 @@ function readConfigFile() {
                 let originalDataPage = originalData.pages.find((originalDataPage) => {
                     return page.id === originalDataPage.id;
                 });
-                return new Page_1.Page(page.id, page.name, page.path, originalDataPage.elementsToTest, page.elementsToIgnore);
+                return new page_1.Page(page.id, page.name, page.path, originalDataPage.elementsToTest, page.elementsToIgnore);
             }).forEach((page, index, rawPages) => {
                 Data.addPage(page);
             });
