@@ -169,28 +169,32 @@
                             </span>
                         </div>
                         <div class="well">
-                            <!-- ko foreach: page.elementsToTest -->
-                            <bs-collapsible-panel
-                                    params="diffElement:$data">
-                                        <span class="panel-heading">
-                                            <span data-bind="visible: typeof diffElement.error !== 'undefined'">
-                                                <span class="glyphicon glyphicon-exclamation-sign"
-                                                  aria-hidden="true"></span>
-                                                <span class="sr-only">Error:</span>
-                                            </span>
-                                            <span data-bind="text: diffElement.selector"></span>
-                                            <span class="pull-right">
-                                                Elements: <span class="label label-as-badge label-default"
-                                                                data-bind="text: diffElement.elementDiffs.length, css: {'label-warning': diffElement.elementDiffs.length > 0, 'label-success': diffElement.elementDiffs.length < 1}"></span>
-                                                Styles: <span class="label label-as-badge"
-                                                              data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
-                                            </span>
-                                        </span>
-                                <div class="alert alert-danger" role="alert" data-bind="visible: typeof diffElement.error !== 'undefined'" class="text-danger">
-                                    <span data-bind="text: diffElement.error"></span>
-                                </div>
-                                <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
-                            </bs-collapsible-panel>
+                            <!-- ko foreach: page.states -->
+                            <h4>State: <span data-bind="text: id"></span></h4>
+                            <hr/>
+                                <!-- ko foreach: elementsToTest -->
+                                    <bs-collapsible-panel
+                                            params="diffElement:$data">
+                                                <span class="panel-heading">
+                                                    <span data-bind="visible: typeof diffElement.error !== 'undefined'">
+                                                        <span class="glyphicon glyphicon-exclamation-sign"
+                                                          aria-hidden="true"></span>
+                                                        <span class="sr-only">Error:</span>
+                                                    </span>
+                                                    <span data-bind="text: diffElement.selector"></span>
+                                                    <span class="pull-right">
+                                                        Elements: <span class="label label-as-badge label-default"
+                                                                        data-bind="text: diffElement.elementDiffs.length, css: {'label-warning': diffElement.elementDiffs.length > 0, 'label-success': diffElement.elementDiffs.length < 1}"></span>
+                                                        Styles: <span class="label label-as-badge"
+                                                                      data-bind="text: diffElement.styleDiffsCount, css: {'label-danger':  diffElement.styleDiffs.length > 0, 'label-success':  diffElement.styleDiffs.length < 1}"></span>
+                                                    </span>
+                                                </span>
+                                        <div class="alert alert-danger" role="alert" data-bind="visible: typeof diffElement.error !== 'undefined'" class="text-danger">
+                                            <span data-bind="text: diffElement.error"></span>
+                                        </div>
+                                        <div data-bind="component: {name: 'diff-element', params: diffElement}"></div>
+                                    </bs-collapsible-panel>
+                                <!-- /ko -->
                             <!-- /ko -->
                         </div>
                     </bs-collapsible-panel>

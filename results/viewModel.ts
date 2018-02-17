@@ -1,7 +1,6 @@
 import {mappingOptions} from "./mapping";
 import * as fileOps from "./fileOperations";
 import {PropertyNameFilter} from "./propertyFilter";
-import {PropertyAndValueFilter, valueType} from "./propertyAndValueFilter";
 import {AddPropertyAndValueFilterViewModel} from "./addPropertyAndValueFilterViewModel";
 
 let $fileInputModal = $('#fileInputModal');
@@ -28,7 +27,7 @@ class ViewModel {
         original: ko.observable<string|any>('loading...'),
         comparator: ko.observable<string|any>('loading...'),
         date: ko.observable<string>('loading...'),
-        pages: ko.observableArray<pageInterface>([])
+        pages: ko.observableArray<IPage>([])
     };
     public propertyNameFilters = ko.observableArray<PropertyNameFilter>();
     public addPropertyAndValueFilter = new AddPropertyAndValueFilterViewModel($addPropertyAndValueFilter);
