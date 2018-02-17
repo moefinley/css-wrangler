@@ -1,10 +1,12 @@
 import * as fs from 'fs';
-import {Page} from "../data/page";
+import {Page, State} from "../data/page";
 import {DiffElement} from "../data/diffElement";
 import {Config} from "./Config";
 import {ICrawlerExtConfig} from "./ICrawlerExtConfig";
 import * as Settings from "../settings/settings";
 import * as Data from "../data/data";
+import {IPageExtConfig, IPageExtState} from "./IPageExtConfig";
+import {IOriginalData} from "./IOriginalData";
 
 let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
     let checkString = function(stringToCheck:string):boolean{
@@ -38,22 +40,27 @@ let validateRawConfig = function(rawConfig:ICrawlerExtConfig){
     return true;
 };
 
-let rawConfig;
-let originalData = null;
-
+let rawConfig:ICrawlerExtConfig;
+let originalData:IOriginalData = null;
 
 export function readConfigFile(){
+    rawConfig = <ICrawlerExtConfig>require(Settings.config).crawlerConfig;
     try {
-        rawConfig = <ICrawlerExtConfig>require(Settings.config).crawlerConfig;
         if(!Settings.original){
             /* Create new pages ready to be populated */
-            rawConfig.pages.map(page => new Page(
-                page.id,
-                page.name,
-                page.path,
-                page.elementsToTest.map(elementToTestSelector => new DiffElement(elementToTestSelector)),
-                page.elementsToIgnore
-            )).forEach((page, index, rawPages) => {
+            let defaultState = [{id:"default", action: ()=>{}}];
+            rawConfig.pages.map(page => {
+                let diffElements = page.elementsToTest.map((elementSelector)=> new DiffElement(elementSelector));
+                page.states = typeof page.states === "undefined" ? defaultState : page.states;
+
+                return new Page(
+                    page.id,
+                    page.name,
+                    page.path,
+                    page.states.map(state => new State(state.id, state.action, diffElements)),
+                    page.elementsToIgnore
+                );
+            }).forEach((page, index, rawPages) => {
                 Data.addPage(page);
             });
         }
@@ -65,18 +72,28 @@ export function readConfigFile(){
 
     if(Settings.original){
         try {
-            originalData = JSON.parse(fs.readFileSync(Settings.original, 'utf8'));
+            originalData = <IOriginalData>JSON.parse(fs.readFileSync(Settings.original, 'utf8'));
             /* Map the original pages to the data module */
             originalData.pages.map((page) => {
-                let originalDataPage = originalData.pages.find((originalDataPage) => {
-                    return page.id === originalDataPage.id;
+
+                let rawConfigPage = rawConfig.pages.find((rawConfigPage) => {
+                    return page.id === rawConfigPage.id;
                 });
+
                 return new Page(
                     page.id,
                     page.name,
                     page.path,
-                    originalDataPage.elementsToTest,
-                    page.elementsToIgnore
+                    page.states.map(state => {
+                        let stateAction = rawConfigPage.states.find(rawState => rawState.id === state.id).action;
+
+                        return new State(state.id, stateAction, state.elementsToTest.map(originalDataDiffElement => {
+                            let diffElement = new DiffElement(originalDataDiffElement.selector);
+                            diffElement.original = originalDataDiffElement.original;
+                            return diffElement;
+                        }));
+                    }),
+                    rawConfigPage.elementsToIgnore
                 )
             }).forEach((page, index, rawPages) => {
                 Data.addPage(page);

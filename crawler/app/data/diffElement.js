@@ -6,6 +6,7 @@ class DiffElement {
         this.original = {};
         this.comparand = {};
         this.diff = [];
+        this.error = null;
     }
     ;
 }

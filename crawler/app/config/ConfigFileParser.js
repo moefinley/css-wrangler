@@ -45,11 +45,16 @@ let validateRawConfig = function (rawConfig) {
 let rawConfig;
 let originalData = null;
 function readConfigFile() {
+    rawConfig = require(Settings.config).crawlerConfig;
     try {
-        rawConfig = require(Settings.config).crawlerConfig;
         if (!Settings.original) {
             /* Create new pages ready to be populated */
-            rawConfig.pages.map(page => new page_1.Page(page.id, page.name, page.path, page.elementsToTest.map(elementToTestSelector => new diffElement_1.DiffElement(elementToTestSelector)), page.elementsToIgnore)).forEach((page, index, rawPages) => {
+            let defaultState = [{ id: "default", action: () => { } }];
+            rawConfig.pages.map(page => {
+                let diffElements = page.elementsToTest.map((elementSelector) => new diffElement_1.DiffElement(elementSelector));
+                page.states = typeof page.states === "undefined" ? defaultState : page.states;
+                return new page_1.Page(page.id, page.name, page.path, page.states.map(state => new page_1.State(state.id, state.action, diffElements)), page.elementsToIgnore);
+            }).forEach((page, index, rawPages) => {
                 Data.addPage(page);
             });
         }
@@ -64,10 +69,17 @@ function readConfigFile() {
             originalData = JSON.parse(fs.readFileSync(Settings.original, 'utf8'));
             /* Map the original pages to the data module */
             originalData.pages.map((page) => {
-                let originalDataPage = originalData.pages.find((originalDataPage) => {
-                    return page.id === originalDataPage.id;
+                let rawConfigPage = rawConfig.pages.find((rawConfigPage) => {
+                    return page.id === rawConfigPage.id;
                 });
-                return new page_1.Page(page.id, page.name, page.path, originalDataPage.elementsToTest, page.elementsToIgnore);
+                return new page_1.Page(page.id, page.name, page.path, page.states.map(state => {
+                    let stateAction = rawConfigPage.states.find(rawState => rawState.id === state.id).action;
+                    return new page_1.State(state.id, stateAction, state.elementsToTest.map(originalDataDiffElement => {
+                        let diffElement = new diffElement_1.DiffElement(originalDataDiffElement.selector);
+                        diffElement.original = originalDataDiffElement.original;
+                        return diffElement;
+                    }));
+                }), rawConfigPage.elementsToIgnore);
             }).forEach((page, index, rawPages) => {
                 Data.addPage(page);
             });

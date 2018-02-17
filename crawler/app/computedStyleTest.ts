@@ -14,6 +14,7 @@ import IThenable = promise.IThenable;
 const differ = deepDiff.diff;
 import * as Data from "./data/data";
 import {WebDriver} from "selenium-webdriver";
+import {Page} from "./data/page";
 
 let driver: WebDriver;
 
@@ -46,7 +47,7 @@ function getComputedStylesForPage(
     logVerboseInfo(`Opening url: ${url}`);
     driver.get(url);
     for (let diffElement of elementsToScrape) {
-        if(typeof diffElement.error === 'undefined'){
+        if(diffElement.error === null){
             promiseArray.push(<IThenable<scrapedObjInterface>>driver.executeScript<scrapedObjInterface>(scrapeComputedStyles, diffElement.selector, elementsToIgnore)
                 .then((resultsOfScraping):scrapedObjInterface => {
                     if(typeof resultsOfScraping.error !== "undefined"){
@@ -109,7 +110,9 @@ export function init() {
         let afterPageUrl = `http://${Config.afterUrl}${page.path}${Config.afterQueryString}`;
 
         let addPagePromiseToArray = function(isOriginalRun:boolean) {
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun?beforePageUrl:afterPageUrl, isOriginalRun, page.elementsToTest, page.elementsToIgnore));
+            page.states.forEach((state)=>{
+                beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun?beforePageUrl:afterPageUrl, isOriginalRun, state.elementsToTest, page.elementsToIgnore));
+            });
         };
         if(currentMode === Modes.getBothAndGenerateDiff){
             addPagePromiseToArray(true);
@@ -146,7 +149,7 @@ export function init() {
  * @param page
  * @param allResultsArray
  */
-let processComparandAndSaveDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][]){
+let processComparandAndSaveDiff = function(page:Page, allResultsArray:scrapedObjInterface[][]){
     processBothAndSaveDiff(page, allResultsArray, false);
 };
 
@@ -157,22 +160,27 @@ let processComparandAndSaveDiff = function(page:pageInterface, allResultsArray:s
  * @param allResultsArray
  * @param writeOriginal
  */
-let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrapedObjInterface[][], writeOriginal:boolean = true){
-    for (let index in page.elementsToTest) {
-        let diffElement = page.elementsToTest[index];
-        if(typeof diffElement.error === 'undefined'){
-            diffElement.diff = differ(diffElement.original, diffElement.comparand);
-            cleanDiffElement(diffElement);
+let processBothAndSaveDiff = function(page:Page, allResultsArray:scrapedObjInterface[][], writeOriginal:boolean = true){
+    page.states.forEach((state)=>{
+        for (let index in state.elementsToTest) {
+            let diffElement = state.elementsToTest[index];
+            if(diffElement.error === null){
+                diffElement.diff = differ(diffElement.original, diffElement.comparand);
+                cleanDiffElement(diffElement);
+            }
         }
-    }
-
-    page.elementsToTest = page.elementsToTest.filter((diffElement) => {
-        /**
-         * Keep elements that have diffs or should present an error
-         */
-        return (typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0)
-            || typeof diffElement.error !== 'undefined';
     });
+
+    page.states.forEach((state)=>{
+        state.elementsToTest = state.elementsToTest.filter((diffElement) => {
+            /**
+             * Keep elements that have diffs or should present an error
+             */
+            return (typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0)
+                || diffElement.error !== null;
+        });
+    });
+
 
     page.isProcessed = true;
 
@@ -191,7 +199,7 @@ let processBothAndSaveDiff = function(page:pageInterface, allResultsArray:scrape
  *
  * @param page
  */
-let parseRawOriginalAndSave = function(page:pageInterface):void{
+let parseRawOriginalAndSave = function(page:Page):void{
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
         writeToDisk(createOriginalJson(), Config.originalOutputPath);
@@ -218,7 +226,13 @@ let createJson = function(mapper:(IDiffElement)=>any):string {
                 id:page.id,
                 name: page.name,
                 path:page.path,
-                elementsToTest: page.elementsToTest.map(mapper)
+                states: page.states.map((state)=>{
+                    return {
+                        id: state.id,
+                        elementsToTest: state.elementsToTest.map(mapper)
+                    }
+                }),
+
             }
         })
     });
@@ -227,7 +241,7 @@ let createJson = function(mapper:(IDiffElement)=>any):string {
 let createDiffJson = function ():string {
     return createJson(
         (diffElement) => {
-            if(typeof diffElement.error !== 'undefined'){
+            if(diffElement.error !== null){
                 return {
                     selector: diffElement.selector,
                     error: diffElement.error
@@ -243,7 +257,7 @@ let createDiffJson = function ():string {
 
 let createOriginalJson = function ():string {
     return createJson((diffElement)=>{
-        if(typeof diffElement.error !== "undefined"){
+        if(diffElement.error !== null){
             return {
                 selector: diffElement.selector,
                 error: diffElement.error
@@ -258,7 +272,7 @@ let createOriginalJson = function ():string {
 
 let createComparandJson = function ():string {
     return createJson((diffElement)=>{
-        if(typeof diffElement.error !== "undefined"){
+        if(diffElement.error !== null){
             return {
                 selector: diffElement.selector,
                 error: diffElement.error

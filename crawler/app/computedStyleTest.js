@@ -31,7 +31,7 @@ function getComputedStylesForPage(pageName, url, isOriginalRun, elementsToScrape
     logging_1.logVerboseInfo(`Opening url: ${url}`);
     driver.get(url);
     for (let diffElement of elementsToScrape) {
-        if (typeof diffElement.error === 'undefined') {
+        if (diffElement.error === null) {
             promiseArray.push(driver.executeScript(scrapeComputedStyles_1.scrapeComputedStyles, diffElement.selector, elementsToIgnore)
                 .then((resultsOfScraping) => {
                 if (typeof resultsOfScraping.error !== "undefined") {
@@ -95,7 +95,9 @@ function init() {
         let beforePageUrl = `http://${Config_1.Config.beforeUrl}${page.path}${Config_1.Config.beforeQueryString}`;
         let afterPageUrl = `http://${Config_1.Config.afterUrl}${page.path}${Config_1.Config.afterQueryString}`;
         let addPagePromiseToArray = function (isOriginalRun) {
-            beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun ? beforePageUrl : afterPageUrl, isOriginalRun, page.elementsToTest, page.elementsToIgnore));
+            page.states.forEach((state) => {
+                beforeAndAfterPromises.push(getComputedStylesForPage(page.name, isOriginalRun ? beforePageUrl : afterPageUrl, isOriginalRun, state.elementsToTest, page.elementsToIgnore));
+            });
         };
         if (currentMode === Modes.getBothAndGenerateDiff) {
             addPagePromiseToArray(true);
@@ -141,19 +143,23 @@ let processComparandAndSaveDiff = function (page, allResultsArray) {
  * @param writeOriginal
  */
 let processBothAndSaveDiff = function (page, allResultsArray, writeOriginal = true) {
-    for (let index in page.elementsToTest) {
-        let diffElement = page.elementsToTest[index];
-        if (typeof diffElement.error === 'undefined') {
-            diffElement.diff = differ(diffElement.original, diffElement.comparand);
-            utils_1.cleanDiffElement(diffElement);
+    page.states.forEach((state) => {
+        for (let index in state.elementsToTest) {
+            let diffElement = state.elementsToTest[index];
+            if (diffElement.error === null) {
+                diffElement.diff = differ(diffElement.original, diffElement.comparand);
+                utils_1.cleanDiffElement(diffElement);
+            }
         }
-    }
-    page.elementsToTest = page.elementsToTest.filter((diffElement) => {
-        /**
-         * Keep elements that have diffs or should present an error
-         */
-        return (typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0)
-            || typeof diffElement.error !== 'undefined';
+    });
+    page.states.forEach((state) => {
+        state.elementsToTest = state.elementsToTest.filter((diffElement) => {
+            /**
+             * Keep elements that have diffs or should present an error
+             */
+            return (typeof diffElement.diff !== 'undefined' && diffElement.diff.length > 0)
+                || diffElement.error !== null;
+        });
     });
     page.isProcessed = true;
     if (checkAllPagesProcessed()) {
@@ -197,14 +203,19 @@ let createJson = function (mapper) {
                 id: page.id,
                 name: page.name,
                 path: page.path,
-                elementsToTest: page.elementsToTest.map(mapper)
+                states: page.states.map((state) => {
+                    return {
+                        id: state.id,
+                        elementsToTest: state.elementsToTest.map(mapper)
+                    };
+                }),
             };
         })
     });
 };
 let createDiffJson = function () {
     return createJson((diffElement) => {
-        if (typeof diffElement.error !== 'undefined') {
+        if (diffElement.error !== null) {
             return {
                 selector: diffElement.selector,
                 error: diffElement.error
@@ -218,7 +229,7 @@ let createDiffJson = function () {
 };
 let createOriginalJson = function () {
     return createJson((diffElement) => {
-        if (typeof diffElement.error !== "undefined") {
+        if (diffElement.error !== null) {
             return {
                 selector: diffElement.selector,
                 error: diffElement.error
@@ -232,7 +243,7 @@ let createOriginalJson = function () {
 };
 let createComparandJson = function () {
     return createJson((diffElement) => {
-        if (typeof diffElement.error !== "undefined") {
+        if (diffElement.error !== null) {
             return {
                 selector: diffElement.selector,
                 error: diffElement.error

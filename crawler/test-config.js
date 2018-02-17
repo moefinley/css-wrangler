@@ -12,13 +12,16 @@ exports.crawlerConfig = {
             path: '/home.html',
             elementsToTest: sharedElementsToTest.concat(['.i-dont-exist']),
             elementsToIgnore: ['.ignore-me'],
-            states: {
-                login: function(driver){
-                    driver.findElement(By.id('loginButton')).then(function(loginButton){
-                        loginButton.click();
-                    })
+            states: [
+                {
+                    id: 'login',
+                    action: function(driver){
+                        driver.findElement(By.id('loginButton')).then(function(loginButton){
+                            loginButton.click();
+                        })
+                    }
                 }
-            }
+            ]
         },
         {
             id: 'about',
